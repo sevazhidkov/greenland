@@ -31,6 +31,9 @@
                             marker.setPosition(e.latLng);
                             $('#submit-btn').removeAttr('disabled');
                         });
+                        {% if task.time is not None %}
+                            run();
+                        {% endif %}
                     }
 
                     function submit() {
@@ -99,6 +102,5 @@
             </div>
         </div>
     </div>
-    <script>run()</script>
 
 {% endblock %}
