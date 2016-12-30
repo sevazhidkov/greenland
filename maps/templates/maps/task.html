@@ -3,43 +3,102 @@
 {% block content %}
 
     <div class="main-panel">
-        {% for task in tasks %}
-            <div class="row">
-                <div class="card-panel">
-                    <h5 class="task-title">{{ task.title }}</h5>
+        <div class="row">
+            <div class="card-panel">
+                <h5 class="task-title">{{ task.title }}</h5>
 
-                    <div class="map"></div>
-                    <script>
-                        function initMap() {
-                            var bounds = new google.maps.LatLngBounds();
-                            {% for latLng in task.bounds %}
-                                bounds.extend({lat: {{ latLng.0 }}, lng: {{ latLng.1 }}});
-                            {% endfor %}
+                <div class="map"></div>
+                <script>
+                    var map, marker;
+                    function initMap() {
+                        var bounds = new google.maps.LatLngBounds();
+                        {% for latLng in task.bounds %}
+                            bounds.extend({lat: {{ latLng.0 }}, lng: {{ latLng.1 }}});
+                        {% endfor %}
 
-                            var map = new google.maps.Map(document.getElementsByClassName('map')[0], {
-                                mapTypeId: 'satellite',
-                                disableDefaultUI: true,
-                                zoomControl: true
-                            });
-                            map.fitBounds(bounds);
-                            var marker = new google.maps.Marker({
-                                map: map,
-                                draggable: true,
-                                title: "Drag me!"
-                            });
-                            map.addListener('click', function (e) {
-                                marker.setPosition(e.latLng);
-                            });
-                        }
-                    </script>
-                    <script async defer
-                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-J0f_bW_qHGpF9JrhIGafmVQsa9SGXM&callback=initMap">
-                    </script>
+                        map = new google.maps.Map(document.getElementsByClassName('map')[0], {
+                            mapTypeId: 'satellite',
+                            disableDefaultUI: true,
+                            zoomControl: true
+                        });
+                        map.fitBounds(bounds);
+                        marker = new google.maps.Marker({
+                            map: map,
+                            draggable: true,
+                            title: "Drag me!"
+                        });
+                        map.addListener('click', function (e) {
+                            marker.setPosition(e.latLng);
+                            $('#submit-btn').removeAttr('disabled');
+                        });
+                    }
 
-                    <button class="submit-btn btn-large green waves-effect">Submit</button>
+                    function submit() {
+
+                    }
+
+                    function giveUp() {
+
+                    }
+                </script>
+                <script async defer
+                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-J0f_bW_qHGpF9JrhIGafmVQsa9SGXM&callback=initMap">
+                </script>
+
+                <div class="bottom-controls row">
+                    <div class="col s3">
+                        <button id="give-up-btn" class="btn-large red waves-effect" onclick="giveUp()">Give Up
+                            <i class="material-icons left">not_interested</i></button>
+                    </div>
+                    <div class="col s6">
+                        {% if task.time is not None %}
+                            <p>Time remaining: <b id="time-counter"></b></p>
+                            <script>
+                                function getTimeRemaining(endtime) {
+                                    var t = endtime - Date.now();
+                                    console.log(t);
+                                    var seconds = Math.floor((t / 1000) % 60);
+                                    var minutes = Math.floor((t / 1000 / 60) % 60);
+                                    var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+                                    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+                                    return {
+                                        'total': t,
+                                        'days': days,
+                                        'hours': hours,
+                                        'minutes': minutes,
+                                        'seconds': seconds
+                                    };
+                                }
+                                function run() {
+                                    var endTime = Date.now() + {{ task.time }} * 1000 + 500;
+                                    console.log(endTime);
+                                    function updateClock() {
+                                        var t = getTimeRemaining(endTime);
+                                        if (t.total <= 0) {
+                                            clearInterval(interval);
+                                            $('#time-counter').html("over");
+                                            $('#submit-btn').attr('disabled', true);
+                                            giveUp();
+                                        } else {
+                                            $('#time-counter').html(t.minutes + ':' + (t.seconds < 10 ? '0' + t.seconds : t.seconds));
+                                        }
+                                    }
+
+                                    updateClock();
+                                    var interval = setInterval(updateClock, 1000);
+                                }
+                            </script>
+                        {% endif %}
+                    </div>
+                    <div class="col s3">
+                        <button id="submit-btn" class="btn-large green waves-effect" onclick="submit()" disabled>
+                            Submit
+                            <i class="material-icons right">send</i></button>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
+    <script>run()</script>
 
 {% endblock %}

@@ -7,8 +7,23 @@
     margin-bottom: 30px;
 }
 
-.submit-btn {
-    margin-top: 10px;
+#submit-btn {
+    width: 100%;
+}
+
+#give-up-btn {
+    width: 100%;
+}
+
+.material-icons {
+    margin: 0 !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.bottom-controls {
+    margin-top: 20px;
+    margin-bottom: 5px;
 }
 
 .map {
