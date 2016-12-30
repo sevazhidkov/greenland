@@ -1,0 +1,19 @@
+.main-panel {
+    margin-top: 10%;
+    text-align: center;
+}
+
+.task-title {
+    margin-bottom: 30px;
+}
+
+.submit-btn {
+    margin-top: 10px;
+}
+
+.map {
+    width: 100%;
+    height: 500px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}

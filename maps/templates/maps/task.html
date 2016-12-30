@@ -1,0 +1,45 @@
+{% extends 'maps/base.html' %}
+
+{% block content %}
+
+    <div class="main-panel">
+        {% for task in tasks %}
+            <div class="row">
+                <div class="card-panel">
+                    <h5 class="task-title">{{ task.title }}</h5>
+
+                    <div class="map"></div>
+                    <script>
+                        function initMap() {
+                            var bounds = new google.maps.LatLngBounds();
+                            {% for latLng in task.bounds %}
+                                bounds.extend({lat: {{ latLng.0 }}, lng: {{ latLng.1 }}});
+                            {% endfor %}
+
+                            var map = new google.maps.Map(document.getElementsByClassName('map')[0], {
+                                mapTypeId: 'satellite',
+                                disableDefaultUI: true,
+                                zoomControl: true
+                            });
+                            map.fitBounds(bounds);
+                            var marker = new google.maps.Marker({
+                                map: map,
+                                draggable: true,
+                                title: "Drag me!"
+                            });
+                            map.addListener('click', function (e) {
+                                marker.setPosition(e.latLng);
+                            });
+                        }
+                    </script>
+                    <script async defer
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-J0f_bW_qHGpF9JrhIGafmVQsa9SGXM&callback=initMap">
+                    </script>
+
+                    <button class="submit-btn btn-large green waves-effect">Submit</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

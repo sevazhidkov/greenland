@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import maps.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^task/', maps.views.get_task, name='task'),
 ]
