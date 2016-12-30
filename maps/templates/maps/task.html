@@ -34,17 +34,43 @@
                                 $('#submit-btn').removeAttr('disabled');
                             }
                         });
+                        google.maps.event.addListener(map, 'bounds_changed', function () {
+                            var ne = map.getBounds().getNorthEast();
+                            var sw = map.getBounds().getSouthWest();
+                            var nw = new google.maps.LatLng(ne.lat(), sw.lng());
+                            var se = new google.maps.LatLng(sw.lat(), ne.lng());
+                            if (bounds.contains(ne) &&
+                                bounds.contains(nw) &&
+                                bounds.contains(se) &&
+                                bounds.contains(sw)) return;
+
+                            var c = map.getCenter(),
+                                x = c.lng(),
+                                y = c.lat(),
+                                maxX = bounds.getNorthEast().lng(),
+                                maxY = bounds.getNorthEast().lat(),
+                                minX = bounds.getSouthWest().lng(),
+                                minY = bounds.getSouthWest().lat();
+
+                            if (x < minX) x = minX;
+                            if (x > maxX) x = maxX;
+                            if (y < minY) y = minY;
+                            if (y > maxY) y = maxY;
+                            map.setCenter(new google.maps.LatLng(y, x));
+                        });
+
                         {% if task.time is not None %}
                             run();
                         {% endif %}
                     }
 
                     function submit() {
-
+                        var lat = marker.position.lat();
+                        var lng = marker.position.lng();
+                        console.log(lat + "; " + lng);
                     }
 
                     function giveUp() {
-
                     }
                 </script>
                 <script async defer
@@ -62,7 +88,6 @@
                             <script>
                                 function getTimeRemaining(endtime) {
                                     var t = endtime - Date.now();
-                                    console.log(t);
                                     var seconds = Math.floor((t / 1000) % 60);
                                     var minutes = Math.floor((t / 1000 / 60) % 60);
                                     var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
