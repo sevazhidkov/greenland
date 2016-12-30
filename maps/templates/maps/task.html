@@ -10,6 +10,7 @@
                 <div class="map"></div>
                 <script>
                     var map, marker;
+                    var gameOver = false;
                     function initMap() {
                         var bounds = new google.maps.LatLngBounds();
                         {% for latLng in task.bounds %}
@@ -28,8 +29,10 @@
                             title: "Drag me!"
                         });
                         map.addListener('click', function (e) {
-                            marker.setPosition(e.latLng);
-                            $('#submit-btn').removeAttr('disabled');
+                            if (!gameOver) {
+                                marker.setPosition(e.latLng);
+                                $('#submit-btn').removeAttr('disabled');
+                            }
                         });
                         {% if task.time is not None %}
                             run();
@@ -78,6 +81,7 @@
                                     function updateClock() {
                                         var t = getTimeRemaining(endTime);
                                         if (t.total <= 0) {
+                                            gameOver = true;
                                             clearInterval(interval);
                                             $('#time-counter').html("over");
                                             $('#submit-btn').attr('disabled', true);
