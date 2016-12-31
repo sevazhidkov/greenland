@@ -32,3 +32,30 @@
     margin-bottom: 10px;
     margin-top: 10px;
 }
+
+.text-black {
+    color: black;
+}
+
+.font-md {
+    font-size: 19px;
+}
+
+.choose-panel {
+    padding-left: 50px;
+    padding-bottom: 5px;
+}
+
+.choose-icon {
+    font-size: 15px;
+}
+
+.task-header {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.task-desc {
+    margin-top: 20px;
+    margin-bottom: 0;
+}

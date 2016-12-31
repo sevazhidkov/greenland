@@ -18,6 +18,8 @@ from django.contrib import admin
 import maps.views
 
 urlpatterns = [
+    url(r'^$', maps.views.index, name='index'),
     url(r'^admin/', admin.site.urls),
+    url(r'^choice/', maps.views.get_choice, name='choice'),
     url(r'^task/', maps.views.get_task, name='task'),
 ]

@@ -1,4 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+
+def index(request):
+    return redirect('choice')
+
+
+def get_choice(request):
+    return render(request, 'maps/choice.html', {'sets': [
+        {'id': 1, 'title': 'Question Set Sample', 'creator': 'Creator1', 'duration': '40 minutes'}
+    ]})
 
 
 def get_task(request):
