@@ -30,9 +30,8 @@ def get_choice(request):
         return res.rstrip()
 
     sets = list(map(lambda q:
-                    {'id': q.id, 'title': q.title, 'creator': q.creator, 'duration': pretty_duration(q.max_duration.seconds)},
+                    {'id': q.id, 'title': q.title, 'creator': q.creator.get_full_name(), 'duration': pretty_duration(q.max_duration.seconds)},
                     QuestionSet.objects.all()))
-    print(sets)
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
