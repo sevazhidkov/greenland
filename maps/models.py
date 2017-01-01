@@ -43,6 +43,9 @@ class QuestionSet(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
     max_duration = models.DurationField()
 
+    def get_questions(self):
+        return list(map(lambda x: x.question, QuestionSetMember.objects.filter(question_set__id=self.id)))
+
 
 class QuestionSetMember(models.Model):
     question_set = models.ForeignKey(QuestionSet, db_index=True)
