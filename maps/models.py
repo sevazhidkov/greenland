@@ -57,7 +57,7 @@ class AnswerSet(models.Model):
     student = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
     question_set = models.ForeignKey(QuestionSet)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    end_time = models.DateTimeField(null=True)
 
 
 class Answer(models.Model):
