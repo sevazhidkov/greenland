@@ -15,6 +15,13 @@
                 <script>
                     var map, markers;
                     var gameOver = false;
+                    var singleMarker = true;
+                    {% if task.multiple_marker %}
+                        singleMarker = false;
+                    {% endif %}
+                    var answerSetId = {{ task.answer_set_id }};
+                    var index = {{ task.idx }};
+                    var startTime = Date.now();
                     function initMap() {
                         var bounds = new google.maps.LatLngBounds();
                         {% for latLng in task.bounds %}
@@ -69,12 +76,18 @@
                     }
 
                     function submit() {
-                        var lat = markers[0].position.lat();
-                        var lng = markers[0].position.lng();
-                        console.log(lat + "; " + lng);
+                        for (var i = 0; i < markers.length; i++) {
+                            var lat = markers[i].position.lat();
+                            var lng = markers[i].position.lng();
+                            console.log(lat + "; " + lng);
+                        }
                     }
 
                     function giveUp() {
+                        $.post("/api/answer", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime}, function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                        });
                     }
                 </script>
                 <script async defer
@@ -103,8 +116,8 @@
                                     };
                                 }
                                 function run() {
+                                    startTime = Date.now();
                                     var endTime = Date.now() + {{ task.time }} * 1000 + 500;
-                                    console.log(endTime);
                                     function updateClock() {
                                         var t = getTimeRemaining(endTime);
                                         if (t.total <= 0) {

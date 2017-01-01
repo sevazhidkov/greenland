@@ -12,26 +12,30 @@
         </div>
     </div>
 
-    {% for set in sets %}
-        <a href="../start/{{ set.id }}">
-            <div class="choose-panel card-panel hoverable">
-                <div class="row">
-                    <h4 class="task-header text-black">{{ set.title }}</h4>
+    {% if sets %}
+        {% for set in sets %}
+            <a href="../start/{{ set.id }}">
+                <div class="choose-panel card-panel hoverable">
+                    <div class="row">
+                        <h4 class="task-header text-black">{{ set.title }}</h4>
 
-                    <div class="col s5">
-                        <p class="flow-text text-black font-md task-desc">
-                            <i class="material-icons choose-icon">schedule</i> {{ set.duration }}
-                        </p>
+                        <div class="col s5">
+                            <p class="flow-text text-black font-md task-desc">
+                                <i class="material-icons choose-icon">schedule</i> {{ set.duration }}
+                            </p>
+                        </div>
+                        <div class="col s5">
+                            <p class="flow-text text-black font-md task-desc">
+                                <i class="material-icons choose-icon">supervisor_account</i> {{ set.creator }}
+                            </p>
+                        </div>
+                        {#                    <i class="material-icons large text-black">play_arrow</i>#}
                     </div>
-                    <div class="col s5">
-                        <p class="flow-text text-black font-md task-desc">
-                            <i class="material-icons choose-icon">supervisor_account</i> {{ set.creator }}
-                        </p>
-                    </div>
-{#                    <i class="material-icons large text-black">play_arrow</i>#}
                 </div>
-            </div>
-        </a>
-    {% endfor %}
+            </a>
+        {% endfor %}
+    {% else %}
+        <p class="flow-text" style="text-align: center; color: white">No tests added yet.</p>
+    {% endif %}
 
 {% endblock %}
