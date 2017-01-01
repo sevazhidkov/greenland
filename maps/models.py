@@ -30,7 +30,7 @@ class Question(models.Model):
     map_area = models.ForeignKey(MapArea)
     max_duration = models.DurationField()
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
-    # See “JSON Objects per Question Type” for more details.
+    # See "JSON Objects per Question Type" for more details.
     type = models.TextField()
     statement_data = JSONField()
     reference_data = JSONField()
