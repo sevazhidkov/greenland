@@ -64,6 +64,6 @@ class Answer(models.Model):
     answer_set = models.ForeignKey(AnswerSet, db_index=True)
     question_set_member = models.ForeignKey(QuestionSetMember)
     answer_data = JSONTextField()
-    scoring_data = JSONTextField() # May be recalculated
+    scoring_data = JSONTextField()  # May be recalculated
     duration = models.DurationField()
     submission_time = models.DateTimeField()
