@@ -1,10 +1,12 @@
+from django.conf import settings
+# from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.contrib.postgres.fields import JSONField
+
+JSONTextField = models.TextField
 
 
 # See
-# https://developers.google.com/maps/documentation/javascript/3.exp/reference?hl=en#LatLngBoundsLiteral
-from django.conf import settings
+# https://developers.google.com/maps/documentation/javascript/reference?hl=en#LatLngBoundsLiteral
 
 
 class LatLngBounds(models.Model):
@@ -32,8 +34,8 @@ class Question(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
     # See "JSON Objects per Question Type" for more details.
     type = models.TextField()
-    statement_data = JSONField()
-    reference_data = JSONField()
+    statement_data = JSONTextField()
+    reference_data = JSONTextField()
 
 
 class QuestionSet(models.Model):
@@ -61,7 +63,7 @@ class AnswerSet(models.Model):
 class Answer(models.Model):
     answer_set = models.ForeignKey(AnswerSet, db_index=True)
     question_set_member = models.ForeignKey(QuestionSetMember)
-    answer_data = JSONField()
-    scoring_data = JSONField() # May be recalculated
+    answer_data = JSONTextField()
+    scoring_data = JSONTextField() # May be recalculated
     duration = models.DurationField()
     submission_time = models.DateTimeField()
