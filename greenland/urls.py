@@ -20,6 +20,8 @@ import maps.views
 urlpatterns = [
     url(r'^$', maps.views.index, name='index'),
     url(r'^admin/', admin.site.urls),
+    url(r'^start/(?P<question_set_id>\d+)/', maps.views.start, name='start'),
     url(r'^choice/', maps.views.get_choice, name='choice'),
-    url(r'^task/', maps.views.get_task, name='task'),
+    url(r'^run/(?P<answer_set_id>\d+)/(?P<index>\d+)', maps.views.run, name='task'),
+    url(r'^results/(?P<answer_set_id>\d+)', maps.views.results, name='results')
 ]
