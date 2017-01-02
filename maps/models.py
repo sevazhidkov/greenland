@@ -42,18 +42,7 @@ class QuestionSet(models.Model):
     title = models.CharField(max_length=100)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
     max_duration = models.DurationField()
-
-    def get_questions(self):
-        return list(map(lambda x: x.question, QuestionSetMember.objects.filter(question_set__id=self.id)))
-
-
-class QuestionSetMember(models.Model):
-    question_set = models.ForeignKey(QuestionSet, db_index=True)
-    question = models.ForeignKey(Question)
-    index = models.IntegerField()
-
-    class Meta:
-        ordering = ['index']
+    question_ids = JSONTextField()
 
 
 class AnswerSet(models.Model):
@@ -65,7 +54,8 @@ class AnswerSet(models.Model):
 
 class Answer(models.Model):
     answer_set = models.ForeignKey(AnswerSet, db_index=True)
-    question_set_member = models.ForeignKey(QuestionSetMember)
+    question_set = models.ForeignKey(QuestionSet)
+    question = models.ForeignKey(Question)
     answer_data = JSONTextField()
     scoring_data = JSONTextField()  # May be recalculated
     duration = models.DurationField()
