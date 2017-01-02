@@ -60,7 +60,7 @@ def create_answer(request):
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
-    answer.question = json.loads(question_set.question_ids)[question_index]
+    answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     answer.answer_data = request.POST['answer']
     answer.scoring_data = get_scoring_data(answer.question.type, answer.question.reference_data, answer.answer_data)
     answer.duration = request.POST['duration']
