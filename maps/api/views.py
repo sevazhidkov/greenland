@@ -3,7 +3,7 @@ import datetime
 import math
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from maps.models import QuestionSet, AnswerSet, Answer, QuestionSetMember
+from maps.models import QuestionSet, AnswerSet, Answer
 
 
 def list_question_sets():
