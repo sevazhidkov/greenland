@@ -3,7 +3,7 @@ import datetime
 import math
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from maps.models import QuestionSet, AnswerSet, Answer
+from maps.models import QuestionSet, AnswerSet, Answer, Question
 
 
 def list_question_sets():
@@ -92,3 +92,20 @@ def get_scoring_data(question_type, reference_data, answer_data):
         return {'correct_location': correct_location, 'hint': reference_data['hint'],
                 'accuracy': accuracy, 'score': score}
     return NotImplemented
+
+
+def get_question(request):
+    answer_set = AnswerSet.objects.get(id=request.GET['answer_set_id'])
+    next_question_set = answer_set.question_set
+    for i, question_id in enumerate(json.loads(question_set.question_ids)):
+        if int(request.GET['current_index']) == i + 1:
+            break
+    else:
+        next_question_id = None
+    question = Question.objects.get(id=int(request.GET['current_id']))
+    return JsonResponse({
+        'statement': json.loads(question.statement),
+        'type': question.type,
+        'max_duration': question.max_duration.seconds,
+        'next_index': next_question_id
+    })
