@@ -49,7 +49,7 @@ def http_create_answer_set(request):
 
 
 def create_answer(request):
-    now = datetime.datetime.now();
+    now = datetime.datetime.utcnow();
     answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration > now - answer_set.start_time:
