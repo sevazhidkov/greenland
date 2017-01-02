@@ -11,9 +11,7 @@ def index(request):
 
 def start(request, question_set_id):
     answer_set = create_answer_set(request.user, question_set_id)
-    question_set = QuestionSet.objects.get(pk=question_set_id)
-    first_question_idx = question_set.get_questions()[0].id
-    return redirect('/run/' + str(answer_set.id) + '/' + str(first_question_idx))
+    return redirect('/run/' + str(answer_set.id) + '/0')
 
 
 def get_choice(request):
@@ -22,8 +20,11 @@ def get_choice(request):
 
 
 def run(request, answer_set_id, idx):
+    answer_set = AnswerSet.objects.get(pk=answer_set_id)
+    question = answer_set.question_set.get_questions()[int(idx)]
+    area = question.map_area.display_area
     return render(request, 'maps/task.html', {
-        'task': {'title': 'Task1', 'time': 10, 'bounds': [(59.9172, 30.2919), (59.9366, 30.3337)],
+        'task': {'title': 'Task #' + str(int(idx) + 1), 'time': question.max_duration.seconds, 'bounds': [(area.west, area.north), (area.east, area.south)],
                  'answer_set_id': answer_set_id, 'idx': idx}
     })
 
