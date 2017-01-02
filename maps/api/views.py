@@ -1,7 +1,7 @@
 import json
 import datetime
 import math
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from maps.models import QuestionSet, AnswerSet, Answer
 
@@ -28,7 +28,7 @@ def list_question_sets():
 
 
 def http_list_question_sets(request):
-    return HttpResponse(json.dumps(list_question_sets()))
+    return JsonResponse(list_question_sets())
 
 
 def create_answer_set(user, question_set_id):
@@ -43,11 +43,11 @@ def create_answer_set(user, question_set_id):
 @csrf_exempt
 def http_create_answer_set(request):
     obj = create_answer_set(request.user, request.POST['question_set_id'])
-    return HttpResponse(json.dumps({
+    return JsonResponse({
         'answer_set_id': obj.id,
         'start_index': 0,
         'max_duration': obj.question_set.max_duration.seconds
-    }))
+    })
 
 
 def create_answer(request):
@@ -55,9 +55,9 @@ def create_answer(request):
     answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration > now - answer_set.start_time:
-        return HttpResponse(json.dumps({
-            'status': 'Oops... Too late!'  # TODO
-        }))
+        return JsonResponse({
+            'status_message': 'Test is already over',
+        }, status=403)
     question_index = request.POST['index']
     answer = Answer()
     answer.answer_set = answer_set
@@ -69,9 +69,9 @@ def create_answer(request):
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
-    return HttpResponse(json.dumps({
+    return JsonResponse({
         'scoring_data': answer.scoring_data
-    }))
+    })
 
 EARTH_RADIUS = 6371000
 
