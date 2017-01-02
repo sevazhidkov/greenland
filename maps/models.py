@@ -45,7 +45,6 @@ class QuestionSet(models.Model):
     max_duration = models.DurationField()
     question_ids = JSONTextField(null=True)
 
-
     def get_questions(self):
         questions = []
         for question_id in json.loads(self.question_ids):
