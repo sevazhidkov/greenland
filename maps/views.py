@@ -11,6 +11,8 @@ def index(request):
 
 def start(request, question_set_id):
     answer_set = create_answer_set(request.user, question_set_id)
+    question_set = QuestionSet.objects.get(pk=question_set_id)
+    first_question_idx = question_set.get_questions()[0].id
     return redirect('/run/' + str(answer_set.id) + '/' + str(first_question_idx))
 
 
