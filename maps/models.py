@@ -63,7 +63,7 @@ class Answer(models.Model):
     answer_set = models.ForeignKey(AnswerSet, db_index=True)
     question_set = models.ForeignKey(QuestionSet, null=True)
     question = models.ForeignKey(Question, null=True)
-    answer_data = JSONTextField()
-    scoring_data = JSONTextField()  # May be recalculated
+    answer_data = JSONTextField(null=True)
+    scoring_data = JSONTextField(null=True)  # May be recalculated
     duration = models.DurationField()
     submission_time = models.DateTimeField()
