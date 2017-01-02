@@ -109,3 +109,12 @@ def get_question(request):
         'max_duration': question.max_duration.seconds,
         'next_index': next_question_id
     })
+
+
+def get_results(request):
+    answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
+    answer_set.end_time = datetime.datetime.utcnow()
+    answer_set.save()
+    return JsonResponse({
+        'success': True
+    })
