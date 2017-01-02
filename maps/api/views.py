@@ -1,7 +1,7 @@
 import json
 import datetime
 import math
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from maps.models import QuestionSet, AnswerSet, Answer, Question
 
@@ -96,8 +96,8 @@ def get_scoring_data(question_type, reference_data, answer_data):
 
 def get_question(request):
     answer_set = AnswerSet.objects.get(id=request.GET['answer_set_id'])
-    next_question_set = answer_set.question_set
-    for i, question_id in enumerate(json.loads(question_set.question_ids)):
+    question_set = answer_set.question_set
+    for i, next_question_id in enumerate(json.loads(question_set.question_ids)):
         if int(request.GET['current_index']) == i + 1:
             break
     else:
