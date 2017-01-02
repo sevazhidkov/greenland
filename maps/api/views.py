@@ -6,27 +6,43 @@ from django.views.decorators.csrf import csrf_exempt
 from maps.models import QuestionSet, AnswerSet, Answer, QuestionSetMember
 
 
-def list_question_sets(request):
-    objects = QuestionSet.objects.all()
-    items = []
-    for obj in objects:
-        items.append({
-            'title': obj.title,
-            'max_duration': obj.max_duration.seconds,
-            'creator': {
-                'full_name': obj.creator.get_full_name()
-            }
-        })
-    return HttpResponse(json.dumps(items))
+def list_question_sets():
+    def pretty_duration(seconds):
+        hr = seconds // 3600
+        res = ''
+        if hr > 0:
+            res += str(hr) + ' hours '
+        seconds -= hr * 3600
+        mn = seconds // 60
+        if mn > 0:
+            res += str(mn) + ' minutes '
+        seconds -= mn * 60
+        if seconds > 0:
+            res += str(seconds) + ' seconds '
+        return res.rstrip()
+
+    return list(map(lambda q:
+                    {'id': q.id, 'title': q.title, 'creator': q.creator.get_full_name(),
+                     'duration': pretty_duration(q.max_duration.seconds)},
+                    QuestionSet.objects.all()))
+
+
+def http_list_question_sets(request):
+    return HttpResponse(json.dumps(list_question_sets()))
+
+
+def create_answer_set(user, question_set_id):
+    obj = AnswerSet()
+    obj.student = user
+    obj.question_set = QuestionSet.objects.get(id=question_set_id)
+    obj.start_time = datetime.datetime.utcnow()
+    obj.save()
+    return obj
 
 
 @csrf_exempt
-def create_answer_set(request):
-    obj = AnswerSet()
-    obj.student = request.user
-    obj.question_set = QuestionSet.objects.get(id=request.POST['question_set_id'])
-    obj.start_time = datetime.datetime.utcnow()
-    obj.save()
+def http_create_answer_set(request):
+    obj = create_answer_set(request.user, request.POST['question_set_id'])
     return HttpResponse(json.dumps({
         'answer_set_id': obj.id,
         'start_index': 0,

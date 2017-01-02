@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.shortcuts import render, redirect
 
 from maps.models import *
@@ -9,35 +10,21 @@ def index(request):
 
 
 def start(request, question_set_id):
-    answer_set_id = 228
-    first_question_idx = 1
-    return redirect('/run/' + str(answer_set_id) + '/' + str(first_question_idx))
+    answer_set = create_answer_set(request.user, question_set_id)
+    return redirect('/run/' + str(answer_set.id) + '/0')
 
 
 def get_choice(request):
-    def pretty_duration(seconds):
-        hr = seconds // 3600
-        res = ''
-        if hr > 0:
-            res += str(hr) + ' hours '
-        seconds -= hr * 3600
-        mn = seconds // 60
-        if mn > 0:
-            res += str(mn) + ' minutes '
-        seconds -= mn * 60
-        if seconds > 0:
-            res += str(seconds) + ' seconds '
-        return res.rstrip()
-
-    sets = list(map(lambda q:
-                    {'id': q.id, 'title': q.title, 'creator': q.creator.get_full_name(), 'duration': pretty_duration(q.max_duration.seconds)},
-                    QuestionSet.objects.all()))
+    sets = list_question_sets()
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
 def run(request, answer_set_id, idx):
+    answer_set = AnswerSet.objects.get(pk=answer_set_id)
+    question = answer_set.question_set.get_questions()[int(idx)]
+    area = question.map_area.display_area
     return render(request, 'maps/task.html', {
-        'task': {'title': 'Task1', 'time': 10, 'bounds': [(59.9172, 30.2919), (59.9366, 30.3337)],
+        'task': {'title': 'Task #' + str(int(idx) + 1), 'time': question.max_duration.seconds, 'bounds': [(area.west, area.north), (area.east, area.south)],
                  'answer_set_id': answer_set_id, 'idx': idx}
     })
 
