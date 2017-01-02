@@ -52,11 +52,11 @@ def create_answer(request):
     now = datetime.datetime.utcnow()
     answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
     question_set = answer_set.question_set
-    if question_set.max_duration > now - answer_set.start_time:
+    if question_set.max_duration.seconds > now.timestamp() - answer_set.start_time.timestamp():
         return JsonResponse({
             'status_message': 'Test is already over',
         }, status=403)
-    question_index = request.POST['index']
+    question_index = int(request.POST['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
