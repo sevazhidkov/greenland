@@ -76,15 +76,22 @@
                     }
 
                     function submit() {
-                        for (var i = 0; i < markers.length; i++) {
-                            var lat = markers[i].position.lat();
-                            var lng = markers[i].position.lng();
-                            console.log(lat + "; " + lng);
-                        }
+{#                        for (var i = 0; i < markers.length; i++) {#}
+{#                            var lat = markers[i].position.lat();#}
+{#                            var lng = markers[i].position.lng();#}
+{#                            console.log(lat + "; " + lng);#}
+{#                        }#}
+                        var lat = markers[0].position.lat();
+                        var lng = markers[0].position.lng();
+                        $.post("/api/answer/", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime,
+                            answer: {"location": {"lat": lat, "lng": lng}}}, function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                        });
                     }
 
                     function giveUp() {
-                        $.post("/api/answer", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime}, function (data, status) {
+                        $.post("/api/answer/", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime}, function (data, status) {
                             console.log(status);
                             console.log(data);
                         });

@@ -56,7 +56,7 @@ def create_answer(request):
         return JsonResponse({
             'status_message': 'Test is already over',
         }, status=403)
-    question_index = request.POST['index']
+    question_index = int(request.POST['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
