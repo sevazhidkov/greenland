@@ -3,7 +3,7 @@ import datetime
 import math
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from maps.models import QuestionSet, AnswerSet, Answer, QuestionSetMember
+from maps.models import QuestionSet, AnswerSet, Answer
 
 
 def list_question_sets():
@@ -54,19 +54,18 @@ def create_answer(request):
     now = datetime.datetime.now();
     answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
     question_set = answer_set.question_set
-    if question_set.max_duration > now.__sub__(answer_set.start_time):
+    if question_set.max_duration > now - answer_set.start_time:
         return HttpResponse(json.dumps({
             'status': 'Oops... Too late!'  # TODO
         }))
-    question_set_member_index = request.POST['index']
+    question_index = request.POST['index']
     answer = Answer()
     answer.answer_set = answer_set
-    answer.question_set_member = QuestionSetMember.get(question_set__id=question_set.id,
-                                                       index=question_set_member_index)
-    question = answer.question_set_member.question
+    answer.question_set = question_set
+    answer.question = json.loads(question_set.question_ids)[question_index]
     answer.answer_data = request.POST['answer']
-    answer.scoring_data = get_scoring_data(question.type, question.reference_data, answer.answer_data)
-    answer.duration = now.__sub__(answer_set.end_time)
+    answer.scoring_data = get_scoring_data(answer.question.type, answer.question.reference_data, answer.answer_data)
+    answer.duration = request.POST['duration']
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
