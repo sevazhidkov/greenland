@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 # from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -43,6 +44,13 @@ class QuestionSet(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
     max_duration = models.DurationField()
     question_ids = JSONTextField(null=True)
+
+
+    def get_questions(self):
+        questions = []
+        for question_id in json.loads(self.question_ids):
+            questions.append(Question.objects.get(id=question_id))
+        return questions
 
 
 class AnswerSet(models.Model):
