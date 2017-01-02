@@ -2,7 +2,6 @@ import json
 import datetime
 import math
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from maps.models import QuestionSet, AnswerSet, Answer, Question
 
 
@@ -40,7 +39,6 @@ def create_answer_set(user, question_set_id):
     return obj
 
 
-@csrf_exempt
 def http_create_answer_set(request):
     obj = create_answer_set(request.user, request.POST['question_set_id'])
     return JsonResponse({
