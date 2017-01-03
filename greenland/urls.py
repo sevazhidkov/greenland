@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 import maps.views
+import maps.control.views
 
 urlpatterns = [
     url(r'^$', maps.views.index, name='index'),
@@ -24,5 +25,7 @@ urlpatterns = [
     url(r'^choice/', maps.views.get_choice, name='choice'),
     url(r'^run/(?P<answer_set_id>\d+)/(?P<idx>\d+)', maps.views.run, name='task'),
     url(r'^results/(?P<answer_set_id>\d+)', maps.views.results, name='results'),
+    url(r'^control/add', maps.control.views.create_map),
+    url(r'^control/api/', include('maps.control.api.urls')),
     url(r'^api/', include('maps.api.urls'))
 ]
