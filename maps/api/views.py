@@ -1,7 +1,8 @@
 import json
 import datetime
 import math
-from django.http import JsonResponse
+import imghdr
+from django.http import JsonResponse, HttpResponse
 from maps.models import QuestionSet, AnswerSet, Answer, Question
 
 
@@ -126,3 +127,12 @@ def get_results(request):
     return JsonResponse({
         'success': True
     })
+
+
+def contour_tile(request, question_id):
+    question = Question.objects.get(id=int(question_id))
+    image = question.map_area.contour_map_image
+    return HttpResponse(
+        image,
+        content_type='image/{}'.format(imghdr.what(None, h=image))
+    )
