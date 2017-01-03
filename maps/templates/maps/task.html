@@ -11,6 +11,11 @@
             <div class="card-panel">
                 <h5 class="task-title">{{ task.title }}</h5>
 
+                <div id="ans">
+                    <p id="score" class="flow-text"></p>
+                    <p id="hint"></p>
+                </div>
+
                 <div class="map"></div>
                 <script>
                     var map, markers;
@@ -19,6 +24,7 @@
                     {% if task.multiple_marker %}
                         singleMarker = false;
                     {% endif %}
+                    var interval;
                     var answerSetId = {{ task.answer_set_id }};
                     var index = {{ task.idx }};
                     var startTime = Date.now();
@@ -76,39 +82,60 @@
                     }
 
                     function submit() {
-{#                        for (var i = 0; i < markers.length; i++) {#}
-{#                            var lat = markers[i].position.lat();#}
-{#                            var lng = markers[i].position.lng();#}
-{#                            console.log(lat + "; " + lng);#}
-{#                        }#}
+                        clearInterval(interval);
                         var lat = markers[0].position.lat();
                         var lng = markers[0].position.lng();
-                        $.post("/api/answer/", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime,
-                            answer: {"location": {"lat": lat, "lng": lng}}}, function (data, status) {
-                            console.log(status);
-                            console.log(data);
-                        });
-                    }
-
-                    function giveUp() {
-                        $.post("/api/answer/", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime}, function (data, status) {
+                        $.post("/api/answer/", {
+                            answer_set_id: answerSetId, index: index, duration: Date.now() - startTime,
+                            answer: {"location": {"lat": lat, "lng": lng}}
+                        }, function (data, status) {
                             console.log(status);
                             console.log(data);
                             if (status != 200 && status != 'success') {
                                 alert("Failed with status " + status + ": " + data);
                             } else {
-                                // do smth with scoring data
+                                showCorrectAnswer(data['scoring_data']);
                             }
                         });
+                    }
+
+                    function giveUp() {
+                        clearInterval(interval);
+                        $.post("/api/answer/", {
+                            answer_set_id: answerSetId,
+                            index: index,
+                            duration: Date.now() - startTime
+                        }, function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                            if (status != 200 && status != 'success') {
+                                alert("Failed with status " + status + ": " + data);
+                            } else {
+                                showCorrectAnswer(data['scoring_data']);
+                            }
+                        });
+                    }
+
+                    function showCorrectAnswer(data) {
+                        var score = data['score'];
+                        var accuracy = data['accuracy'];
+                        var hint = data['hint'];
+                        var correctLoc = data['correct_location'];
+                        $('#hint').html("<b>Hint:</b> " + hint);
+                        $('#score').html("Your score is " + score);
+                        $('#bottom-btns').attr('hidden', true);
+                        $('#bottom-next-btn').removeAttr('hidden');
+                        markers[0].setPosition(correctLoc);
+                        markers[0].setDraggable(false);
                     }
                 </script>
                 <script async defer
                         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-J0f_bW_qHGpF9JrhIGafmVQsa9SGXM&callback=initMap">
                 </script>
 
-                <div class="bottom-controls row">
+                <div id="bottom-btns" class="bottom-controls row">
                     <div class="col s3">
-                        <button id="give-up-btn" class="btn-large red waves-effect" onclick="giveUp()">Give Up
+                        <button id="give-up-btn" class="fw btn-large red waves-effect" onclick="giveUp()">Give Up
                             <i class="material-icons left">not_interested</i></button>
                     </div>
                     <div class="col s6">
@@ -130,6 +157,7 @@
                                 function run() {
                                     startTime = Date.now();
                                     var endTime = Date.now() + {{ task.time }} * 1000 + 500;
+
                                     function updateClock() {
                                         var t = getTimeRemaining(endTime);
                                         if (t.total <= 0) {
@@ -144,15 +172,21 @@
                                     }
 
                                     updateClock();
-                                    var interval = setInterval(updateClock, 1000);
+                                    interval = setInterval(updateClock, 1000);
                                 }
                             </script>
                         {% endif %}
                     </div>
                     <div class="col s3">
-                        <button id="submit-btn" class="btn-large green waves-effect" onclick="submit()" disabled>
+                        <button id="submit-btn" class="fw btn-large green waves-effect" onclick="submit()" disabled>
                             Submit
                             <i class="material-icons right">send</i></button>
+                    </div>
+                </div>
+                <div id="bottom-next-btn" class="bottom-controls row" hidden>
+                    <div class="col s12">
+                        <a href="/run/{{ task.answer_set_id }}/{{ index|add:"1" }}"
+                           class="fw btn btn-large indigo waves-effect waves-light">Next Question</a>
                     </div>
                 </div>
             </div>

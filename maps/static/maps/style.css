@@ -7,11 +7,7 @@
     margin-bottom: 30px;
 }
 
-#submit-btn {
-    width: 100%;
-}
-
-#give-up-btn {
+.fw {
     width: 100%;
 }
 
@@ -58,4 +54,9 @@
 .task-desc {
     margin-top: 20px;
     margin-bottom: 0;
+}
+
+#score {
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
