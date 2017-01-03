@@ -76,6 +76,7 @@ WSGI_APPLICATION = 'greenland.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 if 'PORT' in os.environ:
+    DATABASES = {}
     DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 else:
     DATABASES = {
