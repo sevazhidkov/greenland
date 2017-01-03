@@ -53,30 +53,40 @@ def create_answer(request):
     now = datetime.datetime.utcnow()
     answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
     question_set = answer_set.question_set
-    if question_set.max_duration > now - answer_set.start_time:
+    if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
         return JsonResponse({
             'status_message': 'Test is already over',
         }, status=403)
-    question_index = request.POST['index']
+    question_index = int(request.POST['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
-    answer.question = json.loads(question_set.question_ids)[question_index]
-    answer.answer_data = request.POST['answer']
-    answer.scoring_data = get_scoring_data(answer.question.type, answer.question.reference_data, answer.answer_data)
-    answer.duration = request.POST['duration']
+    answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
+    if 'answer' in request.POST:
+        answer.answer_data = request.POST['answer']
+    else:
+        answer.answer_data = json.dumps(None)
+    scoring_data = get_scoring_data(answer.question.type,
+                                    json.loads(answer.question.reference_data),
+                                    json.loads(answer.answer_data))
+    answer.scoring_data = json.dumps(scoring_data)
+    answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
     return JsonResponse({
-        'scoring_data': answer.scoring_data
+        'scoring_data': scoring_data
     })
+
 
 EARTH_RADIUS = 6371000
 
 
 def get_scoring_data(question_type, reference_data, answer_data):
     if question_type == 'point_feature_location':
+        if answer_data is None:
+            return {'correct_location': reference_data['location'], 'hint': reference_data['hint'],
+                    'score': 0, 'accuracy': None}
         correct_location = reference_data['location']
         answer_location = answer_data['location']
         lat1 = correct_location['lat']
