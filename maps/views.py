@@ -27,10 +27,12 @@ def run(request, answer_set_id, idx):
         return redirect('/results/' + str(answer_set_id))
     question = questions[idx]
     area = question.map_area.display_area
+    contour_area = question.map_area.contour_map_reference
     return render(request, 'maps/task.html', {
         'task': {'title': 'Task #' + str(idx + 1), 'time': question.max_duration.seconds,
                  'bounds': [(area.west, area.north), (area.east, area.south)],
-                 'answer_set_id': answer_set_id, 'idx': idx}
+                 'contour_bounds': [(contour_area.west, contour_area.north), (contour_area.east, contour_area.south)],
+                 'answer_set_id': answer_set_id, 'idx': idx, 'question_id': question.id}
     })
 
 
