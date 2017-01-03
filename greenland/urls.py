@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^run/(?P<answer_set_id>\d+)/(?P<idx>\d+)', maps.views.run, name='task'),
     url(r'^results/(?P<answer_set_id>\d+)', maps.views.results, name='results'),
     url(r'^control/$', maps.control.views.control, name='control'),
-    url(r'^control/add', maps.control.views.create_map),
+    url(r'^control/add_map', maps.control.views.create_map),
     url(r'^control/api/', include('maps.control.api.urls')),
     url(r'^api/', include('maps.api.urls'))
 ]
