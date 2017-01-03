@@ -94,6 +94,11 @@
                         $.post("/api/answer/", {answer_set_id: answerSetId, index: index, duration: Date.now() - startTime}, function (data, status) {
                             console.log(status);
                             console.log(data);
+                            if (status != 200 && status != 'success') {
+                                alert("Failed with status " + status + ": " + data);
+                            } else {
+                                // do smth with scoring data
+                            }
                         });
                     }
                 </script>

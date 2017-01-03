@@ -61,15 +61,19 @@ def create_answer(request):
     answer.answer_set = answer_set
     answer.question_set = question_set
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
-    answer.answer_data = request.POST['answer']
-    answer.scoring_data = get_scoring_data(answer.question.type, answer.question.reference_data, answer.answer_data)
-    answer.duration = request.POST['duration']
+    if 'answer' in request.POST:
+        answer.answer_data = request.POST['answer']
+        answer.scoring_data = json.dumps(get_scoring_data(answer.question.type,
+                                                          json.loads(answer.question.reference_data),
+                                                          json.loads(answer.answer_data)))
+    answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
     return JsonResponse({
         'scoring_data': answer.scoring_data
     })
+
 
 EARTH_RADIUS = 6371000
 
