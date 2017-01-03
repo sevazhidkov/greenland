@@ -172,4 +172,4 @@ def create_question(request):
     question.statement_data = request.POST['statement_data']
     question.reference_data = request.POST['reference_data']
     question.save()
-    return JsonResponse(question.id())
+    return JsonResponse({'question_id': question.id()})
