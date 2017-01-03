@@ -173,3 +173,13 @@ def create_question(request):
     question.reference_data = request.POST['reference_data']
     question.save()
     return JsonResponse({'question_id': question.id()})
+
+
+def create_question_set(request):
+    question_set = QuestionSet()
+    question_set.title = request.POST['title']
+    question_set.creator = request.user
+    question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question_set.question_ids = request.POST['question_ids']
+    question_set.save()
+    return JsonResponse({'question_set_id': question_set.id()})
