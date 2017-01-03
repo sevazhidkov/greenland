@@ -3,7 +3,7 @@ import datetime
 import math
 import imghdr
 from django.http import JsonResponse, HttpResponse
-from maps.models import QuestionSet, AnswerSet, Answer, Question
+from maps.models import QuestionSet, AnswerSet, Answer, Question, LatLngBounds, MapArea
 
 
 def list_question_sets():
@@ -136,3 +136,50 @@ def contour_tile(request, question_id):
         image,
         content_type='image/{}'.format(imghdr.what(None, h=image))
     )
+
+
+def create_map_area(request):
+    display_bounds = json.loads(request.POST['display_area'])
+    display_area = LatLngBounds()
+    display_area.east = display_bounds['east']
+    display_area.north = display_bounds['north']
+    display_area.south = display_bounds['south']
+    display_area.west = display_bounds['west']
+    display_area.save()
+
+    contour_bounds = json.loads(request.POST['contour_map_reference'])
+    contour_map_reference = LatLngBounds()
+    contour_map_reference.east = contour_bounds['east']
+    contour_map_reference.north = contour_bounds['north']
+    contour_map_reference.south = contour_bounds['south']
+    contour_map_reference.west = contour_bounds['west']
+    contour_map_reference.save()
+
+    map_area = MapArea()
+    map_area.display_area = display_area
+    map_area.contour_map_reference = contour_map_reference
+    map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
+    map_area.save()
+    return map_area.id;
+
+
+def create_question(request):
+    question = Question()
+    question.map_area = MapArea.objects.get(id=request.POST['map_area_id'])
+    question.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question.creator = request.user
+    question.type = request.POST['type']
+    question.statement_data = request.POST['statement_data']
+    question.reference_data = request.POST['reference_data']
+    question.save()
+    return JsonResponse({'question_id': question.id()})
+
+
+def create_question_set(request):
+    question_set = QuestionSet()
+    question_set.title = request.POST['title']
+    question_set.creator = request.user
+    question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question_set.question_ids = request.POST['question_ids']
+    question_set.save()
+    return JsonResponse({'question_set_id': question_set.id()})
