@@ -15,7 +15,7 @@ def start(request, question_set_id):
 
 
 def get_choice(request):
-    sets = list_question_sets()
+    sets = question_set_list()
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
