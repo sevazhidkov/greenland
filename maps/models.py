@@ -43,7 +43,7 @@ class QuestionSet(models.Model):
     title = models.CharField(max_length=100)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL)
     max_duration = models.DurationField()
-    question_ids = JSONTextField(null=True)
+    question_ids = JSONTextField(default=json.dumps(None))
 
     def get_questions(self):
         questions = []
@@ -63,7 +63,7 @@ class Answer(models.Model):
     answer_set = models.ForeignKey(AnswerSet, db_index=True)
     question_set = models.ForeignKey(QuestionSet, null=True)
     question = models.ForeignKey(Question, null=True)
-    answer_data = JSONTextField(null=True)
-    scoring_data = JSONTextField(null=True)  # May be recalculated
+    answer_data = JSONTextField(default=json.dumps(None))
+    scoring_data = JSONTextField(default=json.dumps(None))  # May be recalculated
     duration = models.DurationField()
     submission_time = models.DateTimeField()

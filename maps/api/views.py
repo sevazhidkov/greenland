@@ -63,6 +63,8 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in request.POST:
         answer.answer_data = request.POST['answer']
+    else:
+        answer.answer_data = json.dumps(None)
     answer.scoring_data = json.dumps(get_scoring_data(answer.question.type,
                                                       json.loads(answer.question.reference_data),
                                                       json.loads(answer.answer_data)))
