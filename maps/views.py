@@ -21,10 +21,15 @@ def get_choice(request):
 
 def run(request, answer_set_id, idx):
     answer_set = AnswerSet.objects.get(pk=answer_set_id)
-    question = answer_set.question_set.get_questions()[int(idx)]
+    idx = int(idx)
+    questions = answer_set.question_set.get_questions()
+    if idx >= len(questions):
+        return redirect('/results/' + str(answer_set_id))
+    question = questions[idx]
     area = question.map_area.display_area
     return render(request, 'maps/task.html', {
-        'task': {'title': 'Task #' + str(int(idx) + 1), 'time': question.max_duration.seconds, 'bounds': [(area.west, area.north), (area.east, area.south)],
+        'task': {'title': 'Task #' + str(idx + 1), 'time': question.max_duration.seconds,
+                 'bounds': [(area.west, area.north), (area.east, area.south)],
                  'answer_set_id': answer_set_id, 'idx': idx}
     })
 
