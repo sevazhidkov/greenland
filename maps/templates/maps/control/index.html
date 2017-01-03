@@ -1,0 +1,49 @@
+{% extends 'maps/base.html' %}
+
+{% block background-color %}
+    purple
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="main-panel">
+            <h2 style="color: white">Edit Tests</h2>
+        </div>
+
+        <div class="fixed-action-btn">
+            <a href="add" class="btn-floating btn-large red raised waves-effect waves-light">
+                <i class="large material-icons">add</i>
+            </a>
+        </div>
+    </div>
+
+    {% if sets %}
+        {% for set in sets %}
+            <div class="card">
+                <div class="row card-content control-content">
+                    <h4 class="text-black control-task-title">{{ set.title }}</h4>
+
+                    <div class="col s5">
+                        <p class="flow-text text-black font-md task-desc">
+                            <i class="material-icons choose-icon">schedule</i> {{ set.duration }}
+                        </p>
+                    </div>
+                    <div class="col s5">
+                        <p class="flow-text text-black font-md task-desc">
+                            <i class="material-icons choose-icon">supervisor_account</i> {{ set.creator }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-action control-controls">
+                    <a href="" class="waves-effect btn-flat orange-text edit-btn">Edit</a>
+                    <a href="" class="waves-effect btn-flat red-text">Remove</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="flow-text" style="text-align: center; color: white">No tests added yet.</p>
+    {% endif %}
+
+{% endblock %}
