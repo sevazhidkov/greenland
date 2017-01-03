@@ -1,8 +1,6 @@
-from django.http import HttpRequest
 from django.shortcuts import render, redirect
-
-from maps.models import *
-from maps.api.views import *
+from maps.actions import questions
+from maps.models import AnswerSet
 
 
 def index(request):
@@ -10,12 +8,12 @@ def index(request):
 
 
 def start(request, question_set_id):
-    answer_set = create_answer_set(request.user, question_set_id)
+    answer_set = questions.create_answer_set(request.user, question_set_id)
     return redirect('/run/' + str(answer_set.id) + '/0')
 
 
 def get_choice(request):
-    sets = question_set_list()
+    sets = questions.question_set_list()
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
