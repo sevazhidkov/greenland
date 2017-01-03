@@ -63,9 +63,9 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in request.POST:
         answer.answer_data = request.POST['answer']
-        answer.scoring_data = json.dumps(get_scoring_data(answer.question.type,
-                                                          json.loads(answer.question.reference_data),
-                                                          json.loads(answer.answer_data)))
+    answer.scoring_data = json.dumps(get_scoring_data(answer.question.type,
+                                                      json.loads(answer.question.reference_data),
+                                                      json.loads(answer.answer_data)))
     answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
     answer.submission_time = now
     answer.save()
@@ -80,6 +80,9 @@ EARTH_RADIUS = 6371000
 
 def get_scoring_data(question_type, reference_data, answer_data):
     if question_type == 'point_feature_location':
+        if answer_data is None:
+            return {'correct_location': reference_data['location'], 'hint': reference_data['hint'],
+                    'score': 0, 'accuracy': None}
         correct_location = reference_data['location']
         answer_location = answer_data['location']
         lat1 = correct_location['lat']
