@@ -171,3 +171,5 @@ def create_question(request):
     question.type = request.POST['type']
     question.statement_data = request.POST['statement_data']
     question.reference_data = request.POST['reference_data']
+    question.save()
+    return JsonResponse(question.id())
