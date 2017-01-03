@@ -107,7 +107,7 @@ def create_map_area(request):
     map_area.contour_map_reference = contour_map_reference
     map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
     map_area.save()
-    return map_area.id;
+    return map_area.id
 
 
 def create_question(request):
@@ -119,7 +119,7 @@ def create_question(request):
     question.statement_data = request.POST['statement_data']
     question.reference_data = request.POST['reference_data']
     question.save()
-    return JsonResponse({'question_id': question.id()})
+    return JsonResponse({'question_id': question.id})
 
 
 def create_question_set(request):
@@ -129,4 +129,4 @@ def create_question_set(request):
     question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
     question_set.question_ids = request.POST['question_ids']
     question_set.save()
-    return JsonResponse({'question_set_id': question_set.id()})
+    return JsonResponse({'question_set_id': question_set.id})

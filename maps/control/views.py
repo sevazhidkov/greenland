@@ -3,7 +3,7 @@ from maps.api.views import *
 
 
 def control(request):
-    return render(request, 'maps/control/index.html', {'sets': list_question_sets()})
+    return render(request, 'maps/control/index.html', {'sets': list_question_sets(), 'questions': list_questions()})
 
 
 def create_map(request):

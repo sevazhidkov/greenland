@@ -6,15 +6,19 @@
 
 {% block content %}
 
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large red raised">
+            <i class="large material-icons">add</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating green"><i class="material-icons">question_answer</i></a></li>
+            <li><a class="btn-floating blue"><i class="material-icons">chat_bubble</i></a></li>
+        </ul>
+    </div>
+
     <div class="row">
         <div class="main-panel">
             <h2 style="color: white">Edit Tests</h2>
-        </div>
-
-        <div class="fixed-action-btn">
-            <a href="add" class="btn-floating btn-large red raised waves-effect waves-light">
-                <i class="large material-icons">add</i>
-            </a>
         </div>
     </div>
 
@@ -37,13 +41,43 @@
                 </div>
 
                 <div class="card-action control-controls">
-                    <a href="" class="waves-effect btn-flat orange-text edit-btn">Edit</a>
-                    <a href="" class="waves-effect btn-flat red-text">Remove</a>
+                    <a onclick="unimpl()" class="waves-effect btn-flat orange-text edit-btn">Edit</a>
+                    <a onclick="unimpl()" class="waves-effect btn-flat red-text">Remove</a>
                 </div>
+                <script>
+                    function unimpl() {
+                        alert("Not implemented yet");
+                    }
+                </script>
             </div>
         {% endfor %}
     {% else %}
         <p class="flow-text" style="text-align: center; color: white">No tests added yet.</p>
+    {% endif %}
+
+    <div class="row">
+        <div class="main-panel">
+            <h2 style="color: white">Edit Questions</h2>
+        </div>
+    </div>
+    {% if questions %}
+        {% for question in questions %}
+            <div class="col s12 m6">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Card Title</span>
+                        <p>I am a very simple card. I am good at containing small bits of information.
+                            I am convenient because I require little markup to use effectively.</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="#">This is a link</a>
+                        <a href="#">This is a link</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="flow-text" style="text-align: center; color: white">No questions added yet.</p>
     {% endif %}
 
 {% endblock %}
