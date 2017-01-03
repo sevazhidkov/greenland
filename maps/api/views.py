@@ -161,3 +161,13 @@ def create_map_area(request):
     map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
     map_area.save()
     return map_area.id;
+
+
+def create_question(request):
+    question = Question()
+    question.map_area = MapArea.objects.get(id=request.POST['map_area_id'])
+    question.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question.creator = request.user
+    question.type = request.POST['type']
+    question.statement_data = request.POST['statement_data']
+    question.reference_data = request.POST['reference_data']
