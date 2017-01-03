@@ -65,15 +65,16 @@ def create_answer(request):
         answer.answer_data = request.POST['answer']
     else:
         answer.answer_data = json.dumps(None)
-    answer.scoring_data = json.dumps(get_scoring_data(answer.question.type,
-                                                      json.loads(answer.question.reference_data),
-                                                      json.loads(answer.answer_data)))
+    scoring_data = get_scoring_data(answer.question.type,
+                                    json.loads(answer.question.reference_data),
+                                    json.loads(answer.answer_data))
+    answer.scoring_data = json.dumps(scoring_data)
     answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
     return JsonResponse({
-        'scoring_data': answer.scoring_data
+        'scoring_data': scoring_data
     })
 
 
