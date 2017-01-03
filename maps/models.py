@@ -18,6 +18,7 @@ class LatLngBounds(models.Model):
 
 
 class MapArea(models.Model):
+    title = models.CharField(max_length=100, blank=True)
     display_area = models.ForeignKey(LatLngBounds, related_name='+')
     # This data should be obviously moved to a storage suitable
     # for blobs. Keeping in here to ease deployment. Migration is
