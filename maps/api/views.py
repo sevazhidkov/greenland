@@ -22,26 +22,27 @@ def create_answer_set(request):
 
 def create_answer(request):
     now = datetime.datetime.utcnow()
-    answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
+    data = json.loads(request.body)
+    answer_set = AnswerSet.objects.get(id=data['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
         return JsonResponse({
             'status_message': 'Test is already over',
         }, status=403)
-    question_index = int(request.POST['index'])
+    question_index = int(data['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
-    if 'answer' in request.POST:
-        answer.answer_data = request.POST['answer']
+    if 'answer' in data:
+        answer.answer_data = json.dumps(data['answer'])
     else:
         answer.answer_data = json.dumps(None)
     scoring_data = questions.get_scoring_data(answer.question.type,
                                               json.loads(answer.question.reference_data),
                                               json.loads(answer.answer_data))
     answer.scoring_data = json.dumps(scoring_data)
-    answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
+    answer.duration = datetime.timedelta(seconds=int(data['duration']))
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
