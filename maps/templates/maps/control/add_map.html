@@ -1,0 +1,67 @@
+{% extends 'maps/base.html' %}
+
+{% block background-color %}
+    purple
+{% endblock %}
+
+{% block content %}
+
+    <div class="main-panel">
+        <div class="row">
+            <div class="card-panel">
+                <h5 class="task-title">Add a Map</h5>
+
+                <div class="row" style="text-align: left">
+                    <form action="/control/api/upload/" method="post" enctype="multipart/form-data" class="col s12">
+                        <b>Map area:</b>
+                        <div class="row">
+                            <div class="input-field col s3">
+                                <input name="display_north" id="display_north" type="text" class="validate">
+                                <label for="display_north">North:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="display_south" id="display_south" type="text" class="validate">
+                                <label for="display_south">South:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="display_west" id="display_west" type="text" class="validate">
+                                <label for="display_west">West:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="display_east" id="display_east" type="text" class="validate">
+                                <label for="display_east">East:</label>
+                            </div>
+                        </div>
+
+                        <b>Contour map area:</b>
+                        <div class="row">
+                            <div class="input-field col s3">
+                                <input name="contour_north" id="contour_north" type="text" class="validate">
+                                <label for="contour_north">North:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="contour_south" id="contour_south" type="text" class="validate">
+                                <label for="contour_south">South:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="contour_west" id="contour_west" type="text" class="validate">
+                                <label for="contour_west">West:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input name="contour_east" id="contour_east" type="text" class="validate">
+                                <label for="contour_east">East:</label>
+                            </div>
+                        </div>
+
+                        <br>
+                        <button style="width: 100%" type="submit" class="waves-effect waves-light btn">
+                            <i class="material-icons left">cloud</i> Submit</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
