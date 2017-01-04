@@ -9,4 +9,4 @@ def control(request):
 
 def create_map(request):
     if request.method == 'GET':
-        return render(request, 'maps/control/add.html')
+        return render(request, 'maps/control/add_map.html')
