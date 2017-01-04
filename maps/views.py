@@ -26,10 +26,12 @@ def run(request, answer_set_id, idx):
     question = questions[idx]
     area = question.map_area.display_area
     contour_area = question.map_area.contour_map_reference
+    binary = question.map_area.contour_map_image
     return render(request, 'maps/task.html', {
         'task': {'title': 'Task #' + str(idx + 1), 'time': question.max_duration.seconds,
                  'bounds': [(area.west, area.north), (area.east, area.south)],
                  'contour_bounds': [(contour_area.west, contour_area.north), (contour_area.east, contour_area.south)],
+                 'use_overlay': (binary is not None and binary != b''),
                  'answer_set_id': answer_set_id, 'idx': idx, 'question_id': question.id}
     })
 
