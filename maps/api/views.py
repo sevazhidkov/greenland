@@ -1,6 +1,8 @@
 import json
 import datetime
 import imghdr
+
+from django.db.models import Model
 from django.http import JsonResponse, HttpResponse
 
 from maps.actions import questions
@@ -22,19 +24,25 @@ def create_answer_set(request):
 
 def create_answer(request):
     now = datetime.datetime.utcnow()
-    answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
+    try:
+        answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
+    except AnswerSet.DoesNotExist:
+        return get_403_error('No answer set with id ' + str(request.POST['answer_set_id']))
     question_set = answer_set.question_set
     if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
-        return JsonResponse({
-            'status_message': 'Test is already over',
-        }, status=403)
+        return get_403_error('Test is already over')
     question_index = int(request.POST['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
-    answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
+    try:
+        answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
+    except IndexError:
+        return get_403_error('No question with index ' + str(question_index) + ' in this question set')
     if 'answer' in request.POST:
         answer.answer_data = request.POST['answer']
+        if not questions.validate_answer_data(answer.answer_data):
+            return get_403_error('Incorrect answer data')
     else:
         answer.answer_data = json.dumps(None)
     scoring_data = questions.get_scoring_data(answer.question.type,
@@ -48,6 +56,12 @@ def create_answer(request):
     return JsonResponse({
         'scoring_data': scoring_data
     })
+
+
+def get_403_error(message=None):
+    if message is None:
+        return JsonResponse({}, status=403)
+    return JsonResponse({'status_message': message}, status=403)
 
 
 def get_question(request):
@@ -116,8 +130,11 @@ def create_question(request):
     question.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
     question.creator = request.user
     question.type = request.POST['type']
+    assert type(question.type) is str
     question.statement_data = request.POST['statement_data']
+    assert questions.validate_statement_data(question.statement_data)
     question.reference_data = request.POST['reference_data']
+    assert questions.validate_reference_data(question.reference_data)
     question.save()
     return JsonResponse({'question_id': question.id})
 
@@ -125,8 +142,13 @@ def create_question(request):
 def create_question_set(request):
     question_set = QuestionSet()
     question_set.title = request.POST['title']
+    assert type(question_set.title) is str
     question_set.creator = request.user
     question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
     question_set.question_ids = request.POST['question_ids']
+    question_ids = json.loads(question_set.question_ids)
+    assert type(question_ids) is list
+    for question_id in question_ids:
+        assert type(question_id) is int
     question_set.save()
     return JsonResponse({'question_set_id': question_set.id})
