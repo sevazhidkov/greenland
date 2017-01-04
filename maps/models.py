@@ -24,10 +24,10 @@ class MapArea(models.Model):
     # for blobs. Keeping in here to ease deployment. Migration is
     # an exercise for the happy future developer.
     # The data stored is image in PNG or JPEG format.
-    contour_map_image = models.BinaryField()
+    contour_map_image = models.BinaryField(null=True)
     # Which part of the Earth the rectangular stored
     # in contour_map_image represents.
-    contour_map_reference = models.ForeignKey(LatLngBounds, related_name='+')
+    contour_map_reference = models.ForeignKey(LatLngBounds, related_name='+', null=True)
 
 
 class Question(models.Model):
