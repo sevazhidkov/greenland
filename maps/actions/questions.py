@@ -66,7 +66,7 @@ def get_scoring_data(question_type, reference_data, answer_data):
                                                  math.cos(lng1 - lng2)) / 2)
         sufficient_accuracy = reference_data['sufficient_accuracy']
         failed_accuracy = reference_data['failed_accuracy']
-        score = max(min(0, accuracy - failed_accuracy) / (sufficient_accuracy - failed_accuracy), 1)
+        score = min(max(0, failed_accuracy - accuracy) / (failed_accuracy - sufficient_accuracy), 1)
         return {'correct_location': correct_location, 'hint': reference_data['hint'],
                 'accuracy': accuracy, 'score': score}
     return NotImplemented
