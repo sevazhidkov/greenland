@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from maps.api.views import *
+from maps.actions.questions import *
 
 
 def control(request):
-    return render(request, 'maps/control/index.html', {'sets': list_question_sets(), 'questions': list_questions()})
+    return render(request, 'maps/control/index.html', {'sets': question_set_list(), 'questions': question_list()})
 
 
 def create_map(request):

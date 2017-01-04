@@ -1,8 +1,6 @@
 import json
 import datetime
 import imghdr
-
-from django.db.models import Model
 from django.http import JsonResponse, HttpResponse
 
 from maps.actions import questions
@@ -24,32 +22,27 @@ def create_answer_set(request):
 
 def create_answer(request):
     now = datetime.datetime.utcnow()
-    try:
-        answer_set = AnswerSet.objects.get(id=request.POST['answer_set_id'])
-    except AnswerSet.DoesNotExist:
-        return get_403_error('No answer set with id ' + str(request.POST['answer_set_id']))
+    data = json.loads(request.body)
+    answer_set = AnswerSet.objects.get(id=data['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
-        return get_403_error('Test is already over')
-    question_index = int(request.POST['index'])
+        return JsonResponse({
+            'status_message': 'Test is already over',
+        }, status=403)
+    question_index = int(data['index'])
     answer = Answer()
     answer.answer_set = answer_set
     answer.question_set = question_set
-    try:
-        answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
-    except IndexError:
-        return get_403_error('No question with index ' + str(question_index) + ' in this question set')
-    if 'answer' in request.POST:
-        answer.answer_data = request.POST['answer']
-        if not questions.validate_answer_data(answer.answer_data):
-            return get_403_error('Incorrect answer data')
+    answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
+    if 'answer' in data:
+        answer.answer_data = json.dumps(data['answer'])
     else:
         answer.answer_data = json.dumps(None)
     scoring_data = questions.get_scoring_data(answer.question.type,
                                               json.loads(answer.question.reference_data),
                                               json.loads(answer.answer_data))
     answer.scoring_data = json.dumps(scoring_data)
-    answer.duration = datetime.timedelta(seconds=int(request.POST['duration']))
+    answer.duration = datetime.timedelta(seconds=int(data['duration']))
     answer.submission_time = now
     answer.save()
     answer_set.end_time = now
@@ -99,8 +92,16 @@ def contour_tile(request, question_id):
     )
 
 
-def create_map_area(request):
-    display_bounds = json.loads(request.POST['display_area'])
+def create_map_area(request, form=False):
+    if form:
+        display_bounds = {
+            'east': request.POST['display_east'],
+            'north': request.POST['display_north'],
+            'south': request.POST['display_south'],
+            'west': request.POST['display_west']
+        }
+    else:
+        display_bounds = json.loads(request.POST['display_area'])
     display_area = LatLngBounds()
     display_area.east = display_bounds['east']
     display_area.north = display_bounds['north']
@@ -108,7 +109,15 @@ def create_map_area(request):
     display_area.west = display_bounds['west']
     display_area.save()
 
-    contour_bounds = json.loads(request.POST['contour_map_reference'])
+    if form:
+        contour_bounds = {
+            'east': request.POST['contour_east'],
+            'north': request.POST['contour_north'],
+            'south': request.POST['contour_south'],
+            'west': request.POST['contour_west']
+        }
+    else:
+        contour_bounds = json.loads(request.POST['contour_map_reference'])
     contour_map_reference = LatLngBounds()
     contour_map_reference.east = contour_bounds['east']
     contour_map_reference.north = contour_bounds['north']
@@ -117,6 +126,7 @@ def create_map_area(request):
     contour_map_reference.save()
 
     map_area = MapArea()
+    map_area.title = request.POST['title']
     map_area.display_area = display_area
     map_area.contour_map_reference = contour_map_reference
     map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
