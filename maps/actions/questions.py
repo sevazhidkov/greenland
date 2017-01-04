@@ -137,3 +137,19 @@ def validate_reference_data(question_type, reference_data):
         return False
     else:
         return True
+
+
+def validate_bounds(bounds):
+    try:
+        assert 'east' in bounds
+        assert 'north' in bounds
+        assert 'south' in bounds
+        assert 'west' in bounds
+        assert type(bounds['east']) in (float, int)
+        assert type(bounds['north']) in (float, int)
+        assert type(bounds['south']) in (float, int)
+        assert type(bounds['west']) in (float, int)
+    except AssertionError:
+        return False
+    else:
+        return True

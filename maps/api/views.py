@@ -36,6 +36,7 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in data:
         answer.answer_data = json.dumps(data['answer'])
+        assert questions.validate_answer_data(answer.answer_data)
     else:
         answer.answer_data = json.dumps(None)
     scoring_data = questions.get_scoring_data(answer.question.type,
@@ -102,6 +103,7 @@ def create_map_area(request, form=False):
         }
     else:
         display_bounds = json.loads(request.POST['display_area'])
+    assert questions.validate_bounds(display_bounds)
     display_area = LatLngBounds()
     display_area.east = display_bounds['east']
     display_area.north = display_bounds['north']
@@ -118,6 +120,7 @@ def create_map_area(request, form=False):
         }
     else:
         contour_bounds = json.loads(request.POST['contour_map_reference'])
+    assert questions.validate_bounds(contour_bounds)
     contour_map_reference = LatLngBounds()
     contour_map_reference.east = contour_bounds['east']
     contour_map_reference.north = contour_bounds['north']
@@ -127,6 +130,7 @@ def create_map_area(request, form=False):
 
     map_area = MapArea()
     map_area.title = request.POST['title']
+    assert type(map_area.title) is str
     map_area.display_area = display_area
     map_area.contour_map_reference = contour_map_reference
     map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
