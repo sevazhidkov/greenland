@@ -58,6 +58,12 @@ def get_403_error(message=None):
     return JsonResponse({'status_message': message}, status=403)
 
 
+def question(request):
+    if request.method == 'GET':
+        return get_question(request)
+    return create_question(request)
+
+
 def get_question(request):
     answer_set = AnswerSet.objects.get(id=request.GET['answer_set_id'])
     question_set = answer_set.question_set
