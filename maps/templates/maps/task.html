@@ -144,10 +144,10 @@
                         clearInterval(interval);
                         var lat = markers[0].position.lat();
                         var lng = markers[0].position.lng();
-                        $.post("/api/answer/", {
+                        $.post("/api/answer/", JSON.stringify({
                             answer_set_id: answerSetId, index: index, duration: Date.now() - startTime,
                             answer: {"location": {"lat": lat, "lng": lng}}
-                        }, function (data, status) {
+                        }), function (data, status) {
                             console.log(status);
                             console.log(data);
                             if (status != 200 && status != 'success') {
@@ -160,11 +160,11 @@
 
                     function giveUp() {
                         clearInterval(interval);
-                        $.post("/api/answer/", {
+                        $.post("/api/answer/", JSON.stringify({
                             answer_set_id: answerSetId,
                             index: index,
                             duration: Date.now() - startTime
-                        }, function (data, status) {
+                        }), function (data, status) {
                             console.log(status);
                             console.log(data);
                             if (status != 200 && status != 'success') {
