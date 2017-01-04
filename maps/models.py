@@ -29,6 +29,9 @@ class MapArea(models.Model):
     # in contour_map_image represents.
     contour_map_reference = models.ForeignKey(LatLngBounds, related_name='+')
 
+    def __str__(self):
+        return self.title or 'Map area #{}'.format(self.id)
+
 
 class Question(models.Model):
     map_area = models.ForeignKey(MapArea)
