@@ -170,3 +170,7 @@ def create_question_set(request):
         assert type(question_id) is int
     question_set.save()
     return JsonResponse({'question_set_id': question_set.id})
+
+
+def delete_question_set(request):
+    QuestionSet.objects.get(id=request.DELETE['question_set_id']).delete()
