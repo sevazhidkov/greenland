@@ -2,6 +2,7 @@ import json
 from django.conf import settings
 # from django.contrib.postgres.fields import JSONField
 from django.db import models
+from maps.actions.types import TYPE_NAMES
 
 JSONTextField = models.TextField
 
@@ -41,6 +42,10 @@ class Question(models.Model):
     type = models.TextField()
     statement_data = JSONTextField()
     reference_data = JSONTextField()
+
+    @property
+    def actions(self):
+        return TYPE_NAMES[self.type]
 
 
 class QuestionSet(models.Model):

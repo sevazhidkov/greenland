@@ -22,7 +22,7 @@ def create_answer_set(request):
 
 def create_answer(request):
     now = datetime.datetime.utcnow()
-    data = json.loads(request.body)
+    data = json.loads(request.body.decode('utf-8'))
     answer_set = AnswerSet.objects.get(id=data['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
@@ -36,12 +36,13 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in data:
         answer.answer_data = json.dumps(data['answer'])
-        assert questions.validate_answer_data(answer.answer_data)
+        assert answer.question.actions.validate_answer_data(answer.question.type, answer.answer_data)
     else:
         answer.answer_data = json.dumps(None)
-    scoring_data = questions.get_scoring_data(answer.question.type,
-                                              json.loads(answer.question.reference_data),
-                                              json.loads(answer.answer_data))
+    scoring_data = answer.question.actions.get_scoring_data(
+        answer.question.type, json.loads(answer.question.reference_data),
+        json.loads(answer.answer_data)
+    )
     answer.scoring_data = json.dumps(scoring_data)
     answer.duration = datetime.timedelta(seconds=int(data['duration']))
     answer.submission_time = now
@@ -155,9 +156,9 @@ def create_question(request):
     question.type = request.POST['type']
     assert type(question.type) is str
     question.statement_data = request.POST['statement_data']
-    assert questions.validate_statement_data(question.statement_data)
+    assert question.actions.validate_statement_data(question.type, question.statement_data)
     question.reference_data = request.POST['reference_data']
-    assert questions.validate_reference_data(question.reference_data)
+    assert question.actions.validate_reference_data(question.type, question.reference_data)
     question.save()
     return JsonResponse({'question_id': question.id})
 
