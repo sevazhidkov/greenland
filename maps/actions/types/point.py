@@ -1,11 +1,9 @@
 import json
 from maps.actions import questions
 
-<<<<<<< HEAD
 EARTH_RADIUS = 6371000
 POINT_FEATURE_LOCATION = 'point_feature_location'
-=======
->>>>>>> 3d6bf11e4e5ca6c7738ee85ab8dd736706bd0b61
+
 
 def get_scoring_data(reference_data, answer_data):
     if answer_data is None:
