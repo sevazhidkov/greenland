@@ -114,7 +114,8 @@
                 if (status != 200 && status != 'success') {
                     alert("Failed with status " + status + ": " + data);
                 } else {
-                    $('#add-question-set').modal('close')
+                    $('#add-question-set').modal('close');
+                    window.location.reload(true);
                 }
             });
         }
