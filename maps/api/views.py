@@ -174,3 +174,7 @@ def create_question_set(request):
 
 def delete_question_set(request):
     QuestionSet.objects.get(id=request.DELETE['question_set_id']).delete()
+
+
+def delete_question(request):
+    Question.objects.get(id=request.DELETE['question_id']).delete()
