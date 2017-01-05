@@ -1,5 +1,5 @@
 import json
-from maps.actions import questions
+from maps.actions import utils
 
 EARTH_RADIUS = 6371000
 POINT_FEATURE_LOCATION = 'point_feature_location'
@@ -15,7 +15,7 @@ def get_scoring_data(reference_data, answer_data):
     lng1 = correct_location['lng']
     lat2 = answer_location['lat']
     lng2 = answer_location['lng']
-    accuracy = questions.distance(lat1, lng1, lat2, lng2)
+    accuracy = utils.distance(lat1, lng1, lat2, lng2)
     sufficient_accuracy = reference_data['sufficient_accuracy']
     failed_accuracy = reference_data['failed_accuracy']
     score = min(max(0, failed_accuracy - accuracy) / (failed_accuracy - sufficient_accuracy), 1)
