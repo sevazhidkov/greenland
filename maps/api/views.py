@@ -20,6 +20,12 @@ def create_answer_set(request):
     })
 
 
+def question(request):
+    if request.method == 'GET':
+        return get_question(request)
+    return create_question(request)
+
+
 def create_answer(request):
     now = datetime.datetime.utcnow()
     data = json.loads(request.body.decode('utf-8'))
@@ -142,9 +148,10 @@ def create_map_area(request, form=False):
 
 
 def create_question(request):
+    print(request.POST)
     question = Question()
-    question.map_area = MapArea.objects.get(id=request.POST['map_area_id'])
-    question.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question.map_area = MapArea.objects.get(id=int(request.POST['map_area_id']))
+    question.max_duration = datetime.timedelta(seconds=int(request.POST['max_duration']))
     question.creator = request.user
     question.type = request.POST['type']
     assert type(question.type) is str
@@ -174,7 +181,9 @@ def create_question_set(request):
 
 def delete_question_set(request):
     QuestionSet.objects.get(id=request.DELETE['question_set_id']).delete()
+    return JsonResponse({})
 
 
 def delete_question(request):
     Question.objects.get(id=request.DELETE['question_id']).delete()
+    return JsonResponse({})

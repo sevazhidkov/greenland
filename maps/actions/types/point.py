@@ -1,7 +1,8 @@
 import json
-import math
+from maps.actions import utils
 
 EARTH_RADIUS = 6371000
+POINT_FEATURE_LOCATION = 'point_feature_location'
 
 
 def get_scoring_data(reference_data, answer_data):
@@ -14,8 +15,7 @@ def get_scoring_data(reference_data, answer_data):
     lng1 = correct_location['lng']
     lat2 = answer_location['lat']
     lng2 = answer_location['lng']
-    accuracy = 2 * EARTH_RADIUS * math.asin((1 - math.cos(lat1) * math.cos(lat2) - math.sin(lat1) * math.sin(lat2) *
-                                             math.cos(lng1 - lng2)) / 2)
+    accuracy = utils.distance(lat1, lng1, lat2, lng2)
     sufficient_accuracy = reference_data['sufficient_accuracy']
     failed_accuracy = reference_data['failed_accuracy']
     score = min(max(0, failed_accuracy - accuracy) / (failed_accuracy - sufficient_accuracy), 1)
@@ -75,8 +75,9 @@ def validate_reference_data(reference_data):
         assert type(lng) in (float, int)
         assert type(sufficient_accuracy) in (float, int)
         assert type(failed_accuracy) in (float, int)
-        assert type(hint) in str
-    except (TypeError, json.JSONDecodeError, AssertionError):
+        assert type(hint) in [str]
+    except (TypeError, json.JSONDecodeError, AssertionError) as error:
+        print(error)
         return False
     else:
         return True

@@ -4,8 +4,6 @@ import datetime
 import json
 from maps.models import QuestionSet, AnswerSet, Question, MapArea
 
-POINT_FEATURE_LOCATION = 'point_feature_location'
-
 
 def pretty_duration(seconds):
     hr = seconds // 3600
@@ -69,7 +67,3 @@ def validate_bounds(bounds):
         return False
     else:
         return True
-
-
-def get_type(name):
-    pass
