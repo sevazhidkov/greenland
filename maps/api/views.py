@@ -150,9 +150,10 @@ def create_map_area(request, form=False):
 
 
 def create_question(request):
+    print(request.POST)
     question = Question()
-    question.map_area = MapArea.objects.get(id=request.POST['map_area_id'])
-    question.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question.map_area = MapArea.objects.get(id=int(request.POST['map_area_id']))
+    question.max_duration = datetime.timedelta(seconds=int(request.POST['max_duration']))
     question.creator = request.user
     question.type = request.POST['type']
     assert type(question.type) is str

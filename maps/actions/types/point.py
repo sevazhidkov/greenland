@@ -2,6 +2,7 @@ import json
 import math
 
 EARTH_RADIUS = 6371000
+POINT_FEATURE_LOCATION = 'point_feature_location'
 
 
 def get_scoring_data(question_type, reference_data, answer_data):
@@ -55,8 +56,6 @@ def validate_statement_data(question_type, statement_data):
 
 
 def validate_reference_data(question_type, reference_data):
-    if question_type != POINT_FEATURE_LOCATION:
-        return NotImplemented
     try:
         reference_data = json.loads(reference_data)
         assert 'location' in reference_data
@@ -77,8 +76,9 @@ def validate_reference_data(question_type, reference_data):
         assert type(lng) in (float, int)
         assert type(sufficient_accuracy) in (float, int)
         assert type(failed_accuracy) in (float, int)
-        assert type(hint) in str
-    except (TypeError, json.JSONDecodeError, AssertionError):
+        assert type(hint) in [str]
+    except (TypeError, json.JSONDecodeError, AssertionError) as error:
+        print(error)
         return False
     else:
         return True

@@ -9,6 +9,40 @@
     <script>
         $(document).ready(function () {
             $('select').material_select();
+
+            $("form").submit(function(event) {
+                var $inputs = $('form :input');
+
+                var values = {};
+                $inputs.each(function() {
+                    values[this.name] = $(this).val();
+                });
+                console.log(values);
+
+                if (values['type'] == 'point_feature_location') {
+                  $.post("/api/question/", {
+                    'map_area_id': values['map'],
+                    'max_duration': values['max_duration'],
+                    'type': values['type'],
+                    'statement_data': JSON.stringify({
+                      'name': values['statement']
+                    }),
+                    'reference_data': JSON.stringify({
+                      'location': {
+                        'lat': parseFloat(values['lat']),
+                        'lng': parseFloat(values['lng']),
+                      },
+                      'sufficient_accuracy': parseFloat(values['sufficient']),
+                      'failed_accuracy': parseFloat(values['failed']),
+                      'hint': values['hint']
+                    }),
+
+                    }, function (data, status) {
+                      window.location.replace("/control/");
+                  });
+                }
+                return false;
+            });
         });
     </script>
 
@@ -18,11 +52,10 @@
                 <h5 class="task-title">Add a Question</h5>
 
                 <div class="row" style="text-align: left">
-                    <form action="/control/api/create_question/" method="post" enctype="multipart/form-data"
-                          class="col s12">
+                    <form class="col s12 main-form">
                         <div class="row">
                             <div class="input-field col s3">
-                                <select title="type" id="type" name="type">
+                                <select title="map" id="map" name="map">
                                     <option value="" disabled selected>Choose a type</option>
                                     {% for map_area in map_areas %}
                                         <option value="{{ map_area.id }}">{{ map_area.title }}</option>
@@ -43,7 +76,7 @@
                                 <label for="display_west">Latitude:</label>
                             </div>
                             <div class="input-field col s2">
-                                <input name="display_east" id="display_east" type="text" class="validate">
+                                <input name="lng" id="display_east" type="text" class="validate">
                                 <label for="display_east">Longitude:</label>
                             </div>
                             <div class="input-field col s2">
@@ -53,8 +86,26 @@
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <textarea id="statement" class="materialize-textarea"></textarea>
+                                <textarea name='statement' id="statement" class="materialize-textarea"></textarea>
                                 <label for="statement">Statement:</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea name='hint' id="hint" class="materialize-textarea"></textarea>
+                                <label for="hint">Hint:</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input name='sufficient' id="sufficient" type="text" class="validate"></textarea>
+                                <label for="sufficient">Sufficient accuracy:</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input name='failed' id="failed" type="text" class="validate"></textarea>
+                                <label for="failed">Failed accuracy:</label>
                             </div>
                         </div>
 
