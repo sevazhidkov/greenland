@@ -1,11 +1,13 @@
 import json
-import math
+from maps.actions import questions
 
+<<<<<<< HEAD
 EARTH_RADIUS = 6371000
 POINT_FEATURE_LOCATION = 'point_feature_location'
+=======
+>>>>>>> 3d6bf11e4e5ca6c7738ee85ab8dd736706bd0b61
 
-
-def get_scoring_data(question_type, reference_data, answer_data):
+def get_scoring_data(reference_data, answer_data):
     if answer_data is None:
         return {'correct_location': reference_data['location'], 'hint': reference_data['hint'],
                 'score': 0, 'accuracy': None}
@@ -15,8 +17,7 @@ def get_scoring_data(question_type, reference_data, answer_data):
     lng1 = correct_location['lng']
     lat2 = answer_location['lat']
     lng2 = answer_location['lng']
-    accuracy = 2 * EARTH_RADIUS * math.asin((1 - math.cos(lat1) * math.cos(lat2) - math.sin(lat1) * math.sin(lat2) *
-                                             math.cos(lng1 - lng2)) / 2)
+    accuracy = questions.distance(lat1, lng1, lat2, lng2)
     sufficient_accuracy = reference_data['sufficient_accuracy']
     failed_accuracy = reference_data['failed_accuracy']
     score = min(max(0, failed_accuracy - accuracy) / (failed_accuracy - sufficient_accuracy), 1)
@@ -24,7 +25,7 @@ def get_scoring_data(question_type, reference_data, answer_data):
             'accuracy': accuracy, 'score': score}
 
 
-def validate_answer_data(question_type, answer_data):
+def validate_answer_data(answer_data):
     try:
         answer_data = json.loads(answer_data)
         assert 'location' in answer_data
@@ -43,7 +44,7 @@ def validate_answer_data(question_type, answer_data):
         return True
 
 
-def validate_statement_data(question_type, statement_data):
+def validate_statement_data(statement_data):
     try:
         statement_data = json.loads(statement_data)
         assert 'name' in statement_data
@@ -55,7 +56,7 @@ def validate_statement_data(question_type, statement_data):
         return True
 
 
-def validate_reference_data(question_type, reference_data):
+def validate_reference_data(reference_data):
     try:
         reference_data = json.loads(reference_data)
         assert 'location' in reference_data

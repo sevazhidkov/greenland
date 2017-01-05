@@ -36,13 +36,11 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in data:
         answer.answer_data = json.dumps(data['answer'])
-        assert answer.question.actions.validate_answer_data(answer.question.type, answer.answer_data)
+        assert answer.question.actions.validate_answer_data(answer.answer_data)
     else:
         answer.answer_data = json.dumps(None)
-    scoring_data = answer.question.actions.get_scoring_data(
-        answer.question.type, json.loads(answer.question.reference_data),
-        json.loads(answer.answer_data)
-    )
+    scoring_data = answer.question.actions.get_scoring_data(json.loads(answer.question.reference_data),
+                                                            json.loads(answer.answer_data))
     answer.scoring_data = json.dumps(scoring_data)
     answer.duration = datetime.timedelta(seconds=int(data['duration']))
     answer.submission_time = now
@@ -57,12 +55,6 @@ def get_403_error(message=None):
     if message is None:
         return JsonResponse({}, status=403)
     return JsonResponse({'status_message': message}, status=403)
-
-
-def question(request):
-    if request.method == 'GET':
-        return get_question(request)
-    return create_question(request)
 
 
 def get_question(request):
@@ -158,9 +150,9 @@ def create_question(request):
     question.type = request.POST['type']
     assert type(question.type) is str
     question.statement_data = request.POST['statement_data']
-    assert question.actions.validate_statement_data(question.type, question.statement_data)
+    assert question.actions.validate_statement_data(question.statement_data)
     question.reference_data = request.POST['reference_data']
-    assert question.actions.validate_reference_data(question.type, question.reference_data)
+    assert question.actions.validate_reference_data(question.reference_data)
     question.save()
     return JsonResponse({'question_id': question.id})
 
@@ -175,6 +167,17 @@ def create_question_set(request):
     question_ids = json.loads(question_set.question_ids)
     assert type(question_ids) is list
     for question_id in question_ids:
+        Question.objects.get(id=question_id)
         assert type(question_id) is int
     question_set.save()
     return JsonResponse({'question_set_id': question_set.id})
+
+
+def delete_question_set(request):
+    QuestionSet.objects.get(id=request.DELETE['question_set_id']).delete()
+    return JsonResponse({})
+
+
+def delete_question(request):
+    Question.objects.get(id=request.DELETE['question_id']).delete()
+    return JsonResponse({})
