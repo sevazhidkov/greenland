@@ -161,7 +161,7 @@ def create_question_set(request):
     question_set.title = request.POST['title']
     assert type(question_set.title) is str
     question_set.creator = request.user
-    question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question_set.max_duration = datetime.timedelta(seconds=int(request.POST['max_duration']))
     question_set.question_ids = request.POST['question_ids']
     question_ids = json.loads(question_set.question_ids)
     assert type(question_ids) is list

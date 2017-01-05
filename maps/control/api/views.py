@@ -9,3 +9,7 @@ def add_map(request):
 
 def create_question(request):
     return api.views.create_question(request)
+
+
+def create_question_set(request):
+    return api.views.create_question_set(request)
