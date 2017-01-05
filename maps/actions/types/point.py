@@ -4,7 +4,7 @@ import math
 EARTH_RADIUS = 6371000
 
 
-def get_scoring_data(question_type, reference_data, answer_data):
+def get_scoring_data(reference_data, answer_data):
     if answer_data is None:
         return {'correct_location': reference_data['location'], 'hint': reference_data['hint'],
                 'score': 0, 'accuracy': None}
@@ -23,7 +23,7 @@ def get_scoring_data(question_type, reference_data, answer_data):
             'accuracy': accuracy, 'score': score}
 
 
-def validate_answer_data(question_type, answer_data):
+def validate_answer_data(answer_data):
     try:
         answer_data = json.loads(answer_data)
         assert 'location' in answer_data
@@ -42,7 +42,7 @@ def validate_answer_data(question_type, answer_data):
         return True
 
 
-def validate_statement_data(question_type, statement_data):
+def validate_statement_data(statement_data):
     try:
         statement_data = json.loads(statement_data)
         assert 'name' in statement_data
@@ -54,9 +54,7 @@ def validate_statement_data(question_type, statement_data):
         return True
 
 
-def validate_reference_data(question_type, reference_data):
-    if question_type != POINT_FEATURE_LOCATION:
-        return NotImplemented
+def validate_reference_data(reference_data):
     try:
         reference_data = json.loads(reference_data)
         assert 'location' in reference_data
