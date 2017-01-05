@@ -102,10 +102,10 @@ def contour_tile(request, question_id):
 def create_map_area(request, form=False):
     if form:
         display_bounds = {
-            'east': request.POST['display_east'],
-            'north': request.POST['display_north'],
-            'south': request.POST['display_south'],
-            'west': request.POST['display_west']
+            'east': int(request.POST['display_east']),
+            'north': int(request.POST['display_north']),
+            'south': int(request.POST['display_south']),
+            'west': int(request.POST['display_west'])
         }
     else:
         display_bounds = json.loads(request.POST['display_area'])
@@ -117,29 +117,32 @@ def create_map_area(request, form=False):
     display_area.west = display_bounds['west']
     display_area.save()
 
-    if form:
-        contour_bounds = {
-            'east': request.POST['contour_east'],
-            'north': request.POST['contour_north'],
-            'south': request.POST['contour_south'],
-            'west': request.POST['contour_west']
-        }
+    if request.POST['contour_east']:
+        if form:
+            contour_bounds = {
+                'east': int(request.POST['contour_east']),
+                'north': int(request.POST['contour_north']),
+                'south': int(request.POST['contour_south']),
+                'west': int(request.POST['contour_west'])
+            }
+        else:
+            contour_bounds = json.loads(request.POST['contour_map_reference'])
+        assert questions.validate_bounds(contour_bounds)
+        contour_map_reference = LatLngBounds()
+        contour_map_reference.east = contour_bounds['east']
+        contour_map_reference.north = contour_bounds['north']
+        contour_map_reference.south = contour_bounds['south']
+        contour_map_reference.west = contour_bounds['west']
+        contour_map_reference.save()
     else:
-        contour_bounds = json.loads(request.POST['contour_map_reference'])
-    assert questions.validate_bounds(contour_bounds)
-    contour_map_reference = LatLngBounds()
-    contour_map_reference.east = contour_bounds['east']
-    contour_map_reference.north = contour_bounds['north']
-    contour_map_reference.south = contour_bounds['south']
-    contour_map_reference.west = contour_bounds['west']
-    contour_map_reference.save()
+        contour_map_reference = None
 
     map_area = MapArea()
     map_area.title = request.POST['title']
-    assert type(map_area.title) is str
     map_area.display_area = display_area
     map_area.contour_map_reference = contour_map_reference
-    map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
+    if 'contour_map_image' in request.FILES:
+        map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
     map_area.save()
     return map_area.id
 
