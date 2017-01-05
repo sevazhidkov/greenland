@@ -1,0 +1,72 @@
+{% extends 'maps/base.html' %}
+
+{% block background-color %}
+    purple
+{% endblock %}
+
+{% block content %}
+
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+
+    <div class="main-panel">
+        <div class="row">
+            <div class="card-panel">
+                <h5 class="task-title">Add a Question</h5>
+
+                <div class="row" style="text-align: left">
+                    <form action="/control/api/create_question/" method="post" enctype="multipart/form-data"
+                          class="col s12">
+                        <div class="row">
+                            <div class="input-field col s3">
+                                <select title="type" id="type" name="type">
+                                    <option value="" disabled selected>Choose a type</option>
+                                    {% for map_area in map_areas %}
+                                        <option value="{{ map_area.id }}">{{ map_area.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label>Map:</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <select title="type" id="type" name="type">
+                                    <option value="" disabled selected>Choose a type</option>
+                                    <option value="point_feature_location">Single point feature</option>
+                                    <option value="linear_feature_location" disabled>Linear feature</option>
+                                </select>
+                                <label>Type:</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <input name="lat" id="display_west" type="text" class="validate">
+                                <label for="display_west">Latitude:</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <input name="display_east" id="display_east" type="text" class="validate">
+                                <label for="display_east">Longitude:</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <input name="max_duration" id="max_duration" type="number" class="validate">
+                                <label for="max_duration">Time (sec):</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea id="statement" class="materialize-textarea"></textarea>
+                                <label for="statement">Statement:</label>
+                            </div>
+                        </div>
+
+                        <br>
+                        <button style="width: 100%" type="submit" class="waves-effect waves-light btn">
+                            <i class="material-icons left">cloud</i> Submit
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

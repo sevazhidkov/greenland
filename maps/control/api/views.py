@@ -4,5 +4,8 @@ from maps import api
 
 
 def add_map(request):
-    api.views.create_map_area(request, form=True)
-    return redirect('/admin/maps/maparea/')
+    return api.views.create_map_area(request, form=True)
+
+
+def create_question(request):
+    return api.views.create_question(request)

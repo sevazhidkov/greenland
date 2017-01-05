@@ -2,7 +2,7 @@ import json
 import math
 import datetime
 import json
-from maps.models import QuestionSet, AnswerSet, Question
+from maps.models import QuestionSet, AnswerSet, Question, MapArea
 
 POINT_FEATURE_LOCATION = 'point_feature_location'
 
@@ -40,6 +40,10 @@ def question_list():
                                'creator': q.creator.get_full_name(),
                                'map_area': pretty_display_area(q.map_area.display_area)},
                     Question.objects.all()))
+
+
+def map_area_list():
+    return list(map(lambda m: {'id': m.id, 'title': m.title}, MapArea.objects.all()))
 
 
 def create_answer_set(user, question_set_id):
