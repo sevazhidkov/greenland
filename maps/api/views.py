@@ -95,10 +95,10 @@ def contour_tile(request, question_id):
 def create_map_area(request, form=False):
     if form:
         display_bounds = {
-            'east': int(request.POST['display_east']),
-            'north': int(request.POST['display_north']),
-            'south': int(request.POST['display_south']),
-            'west': int(request.POST['display_west'])
+            'east': float(request.POST['display_east']),
+            'north': float(request.POST['display_north']),
+            'south': float(request.POST['display_south']),
+            'west': float(request.POST['display_west'])
         }
     else:
         display_bounds = json.loads(request.POST['display_area'])
@@ -113,10 +113,10 @@ def create_map_area(request, form=False):
     if request.POST['contour_east']:
         if form:
             contour_bounds = {
-                'east': int(request.POST['contour_east']),
-                'north': int(request.POST['contour_north']),
-                'south': int(request.POST['contour_south']),
-                'west': int(request.POST['contour_west'])
+                'east': float(request.POST['contour_east']),
+                'north': float(request.POST['contour_north']),
+                'south': float(request.POST['contour_south']),
+                'west': float(request.POST['contour_west'])
             }
         else:
             contour_bounds = json.loads(request.POST['contour_map_reference'])
@@ -162,7 +162,7 @@ def create_question_set(request):
     question_set.title = request.POST['title']
     assert type(question_set.title) is str
     question_set.creator = request.user
-    question_set.max_duration = datetime.timedelta(seconds=request.POST['max_duration'])
+    question_set.max_duration = datetime.timedelta(seconds=int(request.POST['max_duration']))
     question_set.question_ids = request.POST['question_ids']
     question_ids = json.loads(question_set.question_ids)
     assert type(question_ids) is list

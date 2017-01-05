@@ -11,7 +11,8 @@
             <i class="large material-icons">add</i>
         </a>
         <ul>
-            <li><a class="btn-floating yellow darken-1"><i class="material-icons">question_answer</i></a></li>
+            <li><a href="#add_question_set" class="btn-floating yellow darken-1"><i class="material-icons">question_answer</i></a>
+            </li>
             <li><a href="add_question" class="btn-floating blue"><i class="material-icons">chat_bubble</i></a></li>
             <li><a href="add_map" class="btn-floating green"><i class="material-icons">room</i></a></li>
         </ul>
@@ -66,7 +67,7 @@
             <div class="col s4">
                 <div class="card yellow lighten-4">
                     <div class="card-content">
-{#                        <span class="card-title">question.title</span>#}
+                        {#                        <span class="card-title">question.title</span>#}
                         <p>{{ question.statement_data.name }}</p>
                         <p class="flow-text">
                             {{ question.map_area|safe }}
@@ -86,5 +87,104 @@
     {% else %}
         <p class="flow-text" style="text-align: center; color: white">No questions added yet.</p>
     {% endif %}
+
+    <script>
+        $(document).ready(function () {
+            $('.modal').modal();
+        });
+
+        function submitQS() {
+            var title = $('#qs-title').val();
+            var duration = $('#qs-duration').val();
+            var question_ids = "";
+            $('#qs-in').children().each(function (idx, item) {
+                question_ids = question_ids.concat(item.id.substr(3) + ",");
+            });
+            if (question_ids.length == 0) {
+                alert("Please add at least one question");
+                return;
+            }
+
+            question_ids = '[' + question_ids.substr(0, question_ids.length - 1) + ']';
+            $.post("/control/api/create_question_set/", {
+                title: title, max_duration: duration, question_ids: question_ids
+            }, function (data, status) {
+                console.log(status);
+                console.log(data);
+                if (status != 200 && status != 'success') {
+                    alert("Failed with status " + status + ": " + data);
+                } else {
+                    $('#add-question-set').modal('close');
+                    window.location.reload(true);
+                }
+            });
+        }
+    </script>
+
+    <div id="add_question_set" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>Add a new Test</h4>
+            <div class="row">
+                <div class="col s12">
+                    <div class="row">
+                        <div class="input-field col s10">
+                            <input id="qs-title" type="text" class="validate">
+                            <label for="qs-title">Title:</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <input id="qs-duration" type="number" class="validate">
+                            <label for="qs-duration">Time (sec):</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12">
+                    <div class="row">
+                        <div class="col s6">
+
+                            <h5>Included:</h5>
+                            <script>
+                                function exclude(id) {
+                                    $('#qs-ex').append($('#' + id));
+                                    $('#' + id + '-icon').html('playlist_add');
+                                    $('#' + id + '-a').attr('onclick', "include('" + id + "')");
+                                }
+                            </script>
+                            <ul class="collection" id="qs-in">
+                            </ul>
+
+                        </div>
+                        <div class="col s6">
+
+                            <h5>Excluded:</h5>
+                            <script>
+                                function include(id) {
+                                    $('#qs-in').append($('#' + id));
+                                    $('#' + id + '-icon').html('not_interested');
+                                    $('#' + id + '-a').attr('onclick', "exclude('" + id + "')");
+                                }
+                            </script>
+                            <ul class="collection" id="qs-ex">
+                                {% for question in questions %}
+                                    <li class="collection-item" id="qs-{{ question.id }}">
+                                        <div>
+                                            {{ question.statement_data.name }}
+                                            <a id="qs-{{ question.id }}-a" onclick="include('qs-{{ question.id }}')"
+                                               class="secondary-content"><i class="material-icons"
+                                                                            id="qs-{{ question.id }}-icon">playlist_add</i></a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a onclick="submitQS()"
+               class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+        </div>
+    </div>
 
 {% endblock %}
