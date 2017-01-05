@@ -22,7 +22,7 @@ def create_answer_set(request):
 
 def create_answer(request):
     now = datetime.datetime.utcnow()
-    data = json.loads(request.body)
+    data = json.loads(request.body.decode('utf-8'))
     answer_set = AnswerSet.objects.get(id=data['answer_set_id'])
     question_set = answer_set.question_set
     if question_set.max_duration.seconds < now.timestamp() - answer_set.start_time.timestamp():
@@ -36,12 +36,13 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in data:
         answer.answer_data = json.dumps(data['answer'])
-        assert questions.validate_answer_data(answer.question.type, answer.answer_data)
+        assert answer.question.actions.validate_answer_data(answer.question.type, answer.answer_data)
     else:
         answer.answer_data = json.dumps(None)
-    scoring_data = questions.get_scoring_data(answer.question.type,
-                                              json.loads(answer.question.reference_data),
-                                              json.loads(answer.answer_data))
+    scoring_data = answer.question.actions.get_scoring_data(
+        answer.question.type, json.loads(answer.question.reference_data),
+        json.loads(answer.answer_data)
+    )
     answer.scoring_data = json.dumps(scoring_data)
     answer.duration = datetime.timedelta(seconds=int(data['duration']))
     answer.submission_time = now
@@ -56,6 +57,12 @@ def get_403_error(message=None):
     if message is None:
         return JsonResponse({}, status=403)
     return JsonResponse({'status_message': message}, status=403)
+
+
+def question(request):
+    if request.method == 'GET':
+        return get_question(request)
+    return create_question(request)
 
 
 def get_question(request):
@@ -96,10 +103,10 @@ def contour_tile(request, question_id):
 def create_map_area(request, form=False):
     if form:
         display_bounds = {
-            'east': request.POST['display_east'],
-            'north': request.POST['display_north'],
-            'south': request.POST['display_south'],
-            'west': request.POST['display_west']
+            'east': int(request.POST['display_east']),
+            'north': int(request.POST['display_north']),
+            'south': int(request.POST['display_south']),
+            'west': int(request.POST['display_west'])
         }
     else:
         display_bounds = json.loads(request.POST['display_area'])
@@ -111,29 +118,33 @@ def create_map_area(request, form=False):
     display_area.west = display_bounds['west']
     display_area.save()
 
-    if form:
-        contour_bounds = {
-            'east': request.POST['contour_east'],
-            'north': request.POST['contour_north'],
-            'south': request.POST['contour_south'],
-            'west': request.POST['contour_west']
-        }
+    if request.POST['contour_east']:
+        if form:
+            contour_bounds = {
+                'east': int(request.POST['contour_east']),
+                'north': int(request.POST['contour_north']),
+                'south': int(request.POST['contour_south']),
+                'west': int(request.POST['contour_west'])
+            }
+        else:
+            contour_bounds = json.loads(request.POST['contour_map_reference'])
+        assert questions.validate_bounds(contour_bounds)
+        contour_map_reference = LatLngBounds()
+        contour_map_reference.east = contour_bounds['east']
+        contour_map_reference.north = contour_bounds['north']
+        contour_map_reference.south = contour_bounds['south']
+        contour_map_reference.west = contour_bounds['west']
+        contour_map_reference.save()
     else:
-        contour_bounds = json.loads(request.POST['contour_map_reference'])
-    assert questions.validate_bounds(contour_bounds)
-    contour_map_reference = LatLngBounds()
-    contour_map_reference.east = contour_bounds['east']
-    contour_map_reference.north = contour_bounds['north']
-    contour_map_reference.south = contour_bounds['south']
-    contour_map_reference.west = contour_bounds['west']
-    contour_map_reference.save()
+        contour_map_reference = None
 
     map_area = MapArea()
     map_area.title = request.POST['title']
     assert type(map_area.title) is str
     map_area.display_area = display_area
     map_area.contour_map_reference = contour_map_reference
-    map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
+    if 'contour_map_image' in request.FILES:
+        map_area.contour_map_image = list(request.FILES['contour_map_image'].chunks())[0]
     map_area.save()
     return map_area.id
 
@@ -146,9 +157,9 @@ def create_question(request):
     question.type = request.POST['type']
     assert type(question.type) is str
     question.statement_data = request.POST['statement_data']
-    assert questions.validate_statement_data(question.type, question.statement_data)
+    assert question.actions.validate_statement_data(question.type, question.statement_data)
     question.reference_data = request.POST['reference_data']
-    assert questions.validate_reference_data(question.type, question.reference_data)
+    assert question.actions.validate_reference_data(question.type, question.reference_data)
     question.save()
     return JsonResponse({'question_id': question.id})
 

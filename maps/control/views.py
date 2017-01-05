@@ -10,3 +10,7 @@ def control(request):
 def create_map(request):
     if request.method == 'GET':
         return render(request, 'maps/control/add_map.html')
+
+
+def http_create_question(request):
+    return render(request, 'maps/control/add_question.html', {'map_areas': map_area_list()})
