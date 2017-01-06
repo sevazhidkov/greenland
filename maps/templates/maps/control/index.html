@@ -63,27 +63,29 @@
         </div>
     </div>
     {% if questions %}
-        {% for question in questions %}
-            <div class="col s4">
-                <div class="card yellow lighten-4">
-                    <div class="card-content">
-                        {#                        <span class="card-title">question.title</span>#}
-                        <p>{{ question.statement_data.name }}</p>
-                        <p class="flow-text">
-                            {{ question.map_area|safe }}
-                        </p>
-                        <p style="margin-top: 10px">
-                            Duration: {{ question.duration }}<br>
-                            Creator: {{ question.creator }}
-                        </p>
-                    </div>
-                    <div class="card-action">
-                        <a href="">Edit</a>
-                        <a href="">Remove</a>
+        <div class="row">
+            {% for question in questions %}
+                <div class="col s4">
+                    <div class="card yellow lighten-4">
+                        <div class="card-content">
+                            {#                        <span class="card-title">question.title</span>#}
+                            <p>{{ question.statement_data.name }}</p>
+                            <p class="flow-text">
+                                {{ question.map_area|safe }}
+                            </p>
+                            <p style="margin-top: 10px">
+                                Duration: {{ question.duration }}<br>
+                                Creator: {{ question.creator }}
+                            </p>
+                        </div>
+                        <div class="card-action">
+                            <a href="">Edit</a>
+                            <a href="">Remove</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     {% else %}
         <p class="flow-text" style="text-align: center; color: white">No questions added yet.</p>
     {% endif %}
