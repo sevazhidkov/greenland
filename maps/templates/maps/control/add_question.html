@@ -10,36 +10,35 @@
         $(document).ready(function () {
             $('select').material_select();
 
-            $("form").submit(function(event) {
+            $("form").submit(function (event) {
                 var $inputs = $('form :input');
 
                 var values = {};
-                $inputs.each(function() {
+                $inputs.each(function () {
                     values[this.name] = $(this).val();
                 });
                 console.log(values);
 
                 if (values['type'] == 'point_feature_location') {
-                  $.post("/api/question/", {
-                    'map_area_id': values['map'],
-                    'max_duration': values['max_duration'],
-                    'type': values['type'],
-                    'statement_data': JSON.stringify({
-                      'name': values['statement']
-                    }),
-                    'reference_data': JSON.stringify({
-                      'location': {
-                        'lat': parseFloat(values['lat']),
-                        'lng': parseFloat(values['lng']),
-                      },
-                      'sufficient_accuracy': parseFloat(values['sufficient']),
-                      'failed_accuracy': parseFloat(values['failed']),
-                      'hint': values['hint']
-                    }),
-
+                    $.post('/api/question/', {
+                        'map_area_id': values['map'],
+                        'max_duration': values['max_duration'],
+                        'type': values['type'],
+                        'statement_data': JSON.stringify({
+                            'name': values['statement']
+                        }),
+                        'reference_data': JSON.stringify({
+                            'location': {
+                                'lat': parseFloat(values['lat']),
+                                'lng': parseFloat(values['lng'])
+                            },
+                            'sufficient_accuracy': parseFloat(values['sufficient']),
+                            'failed_accuracy': parseFloat(values['failed']),
+                            'hint': values['hint']
+                        })
                     }, function (data, status) {
-                      window.location.replace("/control/");
-                  });
+                        window.location.replace('/control/');
+                    });
                 }
                 return false;
             });
@@ -111,7 +110,7 @@
 
                         <br>
                         <button style="width: 100%" type="submit" class="waves-effect waves-light btn">
-                            <i class="material-icons left">cloud</i> Submit
+                            <i class="material-icons left">send</i> Submit
                         </button>
                     </form>
                 </div>
