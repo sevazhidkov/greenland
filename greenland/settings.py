@@ -118,6 +118,8 @@ SOCIAL_AUTH_VK_OAUTH2_KEY = '5809289'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 'nqrjBMl0hnumobWBJHAd'
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
 
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
