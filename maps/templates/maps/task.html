@@ -156,6 +156,10 @@
                             } else {
                                 showCorrectAnswer(data['scoring_data']);
                             }
+                        }).fail(function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                            alert("Error: " + data.responseJSON['status_message']);
                         });
                     }
 
@@ -173,6 +177,10 @@
                             } else {
                                 showCorrectAnswer(data['scoring_data']);
                             }
+                        }).fail(function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                            alert("Error: " + data.responseJSON['status_message']);
                         });
                     }
 
@@ -184,7 +192,10 @@
                         var correctLoc = data['correct_location'];
                         if (hint.length > 0)
                             $('#hint').html("<b>Hint:</b> " + hint);
-                        $('#score').html("Your score is " + score);
+                        var scoreInfo = "Your score is " + score;
+                        if (accuracy != null)
+                            score += " (distance is " + accuracy + ")";
+                        $('#score').html();
                         $('#bottom-btns').attr('hidden', true);
                         $('#bottom-next-btn').removeAttr('hidden');
                         markers[0].setPosition(correctLoc);
