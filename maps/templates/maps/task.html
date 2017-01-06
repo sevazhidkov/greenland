@@ -143,6 +143,7 @@
 
                     function submit() {
                         clearInterval(interval);
+                        $('#score').html("Checking your answer...");
                         var lat = markers[0].position.lat();
                         var lng = markers[0].position.lng();
                         $.post("/api/answer/", JSON.stringify({
@@ -165,6 +166,7 @@
 
                     function giveUp() {
                         clearInterval(interval);
+                        $('#score').html("Checking your answer...");
                         $.post("/api/answer/", JSON.stringify({
                             answer_set_id: answerSetId,
                             index: index,
