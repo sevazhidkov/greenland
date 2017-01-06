@@ -181,7 +181,8 @@
                         var accuracy = data['accuracy'];
                         var hint = data['hint'];
                         var correctLoc = data['correct_location'];
-                        $('#hint').html("<b>Hint:</b> " + hint);
+                        if (hint.length > 0)
+                            $('#hint').html("<b>Hint:</b> " + hint);
                         $('#score').html("Your score is " + score);
                         $('#bottom-btns').attr('hidden', true);
                         $('#bottom-next-btn').removeAttr('hidden');
