@@ -5,7 +5,7 @@ import json
 
 
 def index(request):
-    if not request.user:
+    if request.user:
         return redirect('choice')
     return render(request, 'maps/index.html')
 
