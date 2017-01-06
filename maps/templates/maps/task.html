@@ -156,6 +156,10 @@
                             } else {
                                 showCorrectAnswer(data['scoring_data']);
                             }
+                        }).fail(function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                            alert("Error: " + data.responseJSON['status_message']);
                         });
                     }
 
@@ -173,16 +177,25 @@
                             } else {
                                 showCorrectAnswer(data['scoring_data']);
                             }
+                        }).fail(function (data, status) {
+                            console.log(status);
+                            console.log(data);
+                            alert("Error: " + data.responseJSON['status_message']);
                         });
                     }
 
                     function showCorrectAnswer(data) {
+                        gameOver = true;
                         var score = data['score'];
                         var accuracy = data['accuracy'];
                         var hint = data['hint'];
                         var correctLoc = data['correct_location'];
-                        $('#hint').html("<b>Hint:</b> " + hint);
-                        $('#score').html("Your score is " + score);
+                        if (hint.length > 0)
+                            $('#hint').html("<b>Hint:</b> " + hint);
+                        var scoreInfo = "Your score is " + score;
+                        if (accuracy != null)
+                            scoreInfo += " (distance is " + (accuracy / 1000).toFixed(1) + " km)";
+                        $('#score').html(scoreInfo);
                         $('#bottom-btns').attr('hidden', true);
                         $('#bottom-next-btn').removeAttr('hidden');
                         markers[0].setPosition(correctLoc);
@@ -194,13 +207,16 @@
                 </script>
 
                 <div id="bottom-btns" class="bottom-controls row">
-                    <div class="col s3">
-                        <button id="give-up-btn" class="fw btn-large red waves-effect" onclick="giveUp()">Give Up
-                            <i class="material-icons left">not_interested</i></button>
+                    <div class="col s4 m3">
+                        <button id="give-up-btn" class="fw btn-large red waves-effect" onclick="giveUp()">
+                            <span class="hide-on-small-only">Give Up</span>
+                            <span class="hide-on-med-and-up"><i class="material-icons">not_interested</i></span>
+                            <span class="hide-on-small-only"><i class="material-icons left">not_interested</i></span>
+                        </button>
                     </div>
-                    <div class="col s6">
+                    <div class="col s4 m6">
                         {% if task.time is not None %}
-                            <p>Time remaining: <b id="time-counter"></b></p>
+                            <p><span class="hide-on-small-only">Time remaining: </span><b id="time-counter"></b></p>
                             <script>
                                 function getTimeRemaining(endtime) {
                                     var t = endtime - Date.now();
@@ -237,15 +253,17 @@
                             </script>
                         {% endif %}
                     </div>
-                    <div class="col s3">
+                    <div class="col s4 m3">
                         <button id="submit-btn" class="fw btn-large green waves-effect" onclick="submit()" disabled>
-                            Submit
-                            <i class="material-icons right">send</i></button>
+                            <span class="hide-on-small-only">Submit</span>
+                            <span class="hide-on-med-and-up"><i class="material-icons">send</i></span>
+                            <span class="hide-on-small-only"><i class="material-icons right">send</i></span>
+                        </button>
                     </div>
                 </div>
                 <div id="bottom-next-btn" class="bottom-controls row" hidden>
                     <div class="col s12">
-                        <a href="/run/{{ task.answer_set_id }}/{{ index|add:"1" }}"
+                        <a href="/run/{{ task.answer_set_id }}/{{ task.idx|add:1 }}"
                            class="fw btn btn-large indigo waves-effect waves-light">Next Question</a>
                     </div>
                 </div>

@@ -47,6 +47,9 @@ class Question(models.Model):
     def actions(self):
         return TYPE_NAMES[self.type]
 
+    def __str__(self):
+        return json.loads(self.statement_data)['name']
+
 
 class QuestionSet(models.Model):
     title = models.CharField(max_length=100)
@@ -59,6 +62,9 @@ class QuestionSet(models.Model):
         for question_id in json.loads(self.question_ids):
             questions.append(Question.objects.get(id=question_id))
         return questions
+
+    def __str__(self):
+        return self.title
 
 
 class AnswerSet(models.Model):

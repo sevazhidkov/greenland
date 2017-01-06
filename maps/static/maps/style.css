@@ -33,6 +33,10 @@
     color: black;
 }
 
+.text-white {
+    color: white;
+}
+
 .font-md {
     font-size: 19px;
 }

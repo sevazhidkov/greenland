@@ -1,0 +1,29 @@
+{% extends 'maps/base.html' %}
+
+{% load staticfiles %}
+
+{% block background-color %}
+    green
+{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript">
+        VK.init({apiId: 5809289});
+    </script>
+
+
+    <div class="row">
+        <div class="main-panel">
+            <h2 class="text-white">Welcome!</h2>
+
+            <p class="flow-text text-white">Please log in to Greenland</p>
+            <br>
+
+            <a href="/login/vk-oauth2/">
+                <img src="{% static 'maps/vk-logo.png' %}" width="128" height="128">
+            </a>
+        </div>
+    </div>
+
+{% endblock %}
