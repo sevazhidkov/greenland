@@ -92,6 +92,7 @@ def get_results(request):
 def contour_tile(request, question_id):
     question = Question.objects.get(id=int(question_id))
     image = question.map_area.contour_map_image
+    print(image, dir(image), type(image))
     return HttpResponse(
         image,
         content_type='image/{}'.format(imghdr.what(None, h=image))
