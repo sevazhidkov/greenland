@@ -5,7 +5,9 @@ import json
 
 
 def index(request):
-    return redirect('choice')
+    if not request.user:
+        return redirect('choice')
+    return render(request, 'maps/index.html')
 
 
 def start(request, question_set_id):
