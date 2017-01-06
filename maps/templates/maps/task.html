@@ -195,13 +195,16 @@
                 </script>
 
                 <div id="bottom-btns" class="bottom-controls row">
-                    <div class="col s3">
-                        <button id="give-up-btn" class="fw btn-large red waves-effect" onclick="giveUp()">Give Up
-                            <i class="material-icons left">not_interested</i></button>
+                    <div class="col s4 m3">
+                        <button id="give-up-btn" class="fw btn-large red waves-effect" onclick="giveUp()">
+                            <span class="hide-on-small-only">Give Up</span>
+                            <span class="hide-on-med-and-up"><i class="material-icons">not_interested</i></span>
+                            <span class="hide-on-small-only"><i class="material-icons left">not_interested</i></span>
+                        </button>
                     </div>
-                    <div class="col s6">
+                    <div class="col s4 m6">
                         {% if task.time is not None %}
-                            <p>Time remaining: <b id="time-counter"></b></p>
+                            <p><span class="hide-on-small-only">Time remaining: </span><b id="time-counter"></b></p>
                             <script>
                                 function getTimeRemaining(endtime) {
                                     var t = endtime - Date.now();
@@ -238,10 +241,12 @@
                             </script>
                         {% endif %}
                     </div>
-                    <div class="col s3">
+                    <div class="col s4 m3">
                         <button id="submit-btn" class="fw btn-large green waves-effect" onclick="submit()" disabled>
-                            Submit
-                            <i class="material-icons right">send</i></button>
+                            <span class="hide-on-small-only">Submit</span>
+                            <span class="hide-on-med-and-up"><i class="material-icons">send</i></span>
+                            <span class="hide-on-small-only"><i class="material-icons right">send</i></span>
+                        </button>
                     </div>
                 </div>
                 <div id="bottom-next-btn" class="bottom-controls row" hidden>
