@@ -194,7 +194,7 @@
                             $('#hint').html("<b>Hint:</b> " + hint);
                         var scoreInfo = "Your score is " + score;
                         if (accuracy != null)
-                            scoreInfo += " (distance is " + accuracy + ")";
+                            scoreInfo += " (distance is " + (accuracy / 1000).toFixed(3) + "km)";
                         $('#score').html(scoreInfo);
                         $('#bottom-btns').attr('hidden', true);
                         $('#bottom-next-btn').removeAttr('hidden');
