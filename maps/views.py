@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from maps.actions import questions
 from maps.models import AnswerSet
+import json
 
 
 def index(request):
@@ -32,7 +33,8 @@ def run(request, answer_set_id, idx):
                  'bounds': [(area.west, area.north), (area.east, area.south)],
                  'contour_bounds': [(contour_area.west, contour_area.north), (contour_area.east, contour_area.south)],
                  'use_overlay': (binary is not None and binary != b''),
-                 'answer_set_id': answer_set_id, 'idx': idx, 'question_id': question.id}
+                 'answer_set_id': answer_set_id, 'idx': idx, 'question_id': question.id,
+                 'statement': json.loads(question.statement_data)['name']},
     })
 
 
