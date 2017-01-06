@@ -194,7 +194,7 @@
                         var correctLoc = data['correct_location'];
                         if (hint.length > 0)
                             $('#hint').html("<b>Hint:</b> " + hint);
-                        var scoreInfo = "Your score is " + score;
+                        var scoreInfo = "Your score is " + score.toFixed(2);
                         if (accuracy != null)
                             scoreInfo += " (distance is " + (accuracy / 1000).toFixed(1) + " km)";
                         $('#score').html(scoreInfo);
