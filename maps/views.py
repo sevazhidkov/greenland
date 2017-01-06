@@ -43,7 +43,7 @@ def run(request, answer_set_id, idx):
     binary = question.map_area.contour_map_image
     return render(request, 'maps/task.html', {
         'task': {'title': 'Task #' + str(idx + 1), 'time': question.max_duration.seconds,
-                 'bounds': [(area.west, area.north), (area.east, area.south)],
+                 'bounds': [(area.north, area.west), (area.south, area.east)],
                  'contour_bounds': None if contour_area is None else [(contour_area.west, contour_area.north),
                                                                       (contour_area.east, contour_area.south)],
                  'use_overlay': (binary is not None and binary != b''),
