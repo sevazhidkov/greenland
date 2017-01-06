@@ -9,16 +9,22 @@ def index(request):
 
 
 def start(request, question_set_id):
+    if not request.user:
+        return redirect('/')
     answer_set = questions.create_answer_set(request.user, question_set_id)
     return redirect('/run/' + str(answer_set.id) + '/0')
 
 
 def get_choice(request):
+    if not request.user:
+        return redirect('/')
     sets = questions.question_set_list()
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
 def run(request, answer_set_id, idx):
+    if not request.user:
+        return redirect('/')
     answer_set = AnswerSet.objects.get(pk=answer_set_id)
     idx = int(idx)
     questions = answer_set.question_set.get_questions()
@@ -39,4 +45,6 @@ def run(request, answer_set_id, idx):
 
 
 def results(request, answer_set_id):
+    if not request.user:
+        return redirect('/')
     return render(request, 'maps/results.html', {})
