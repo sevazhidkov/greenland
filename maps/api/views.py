@@ -1,3 +1,4 @@
+import os
 import json
 import datetime
 import imghdr
@@ -92,6 +93,8 @@ def get_results(request):
 def contour_tile(request, question_id):
     question = Question.objects.get(id=int(question_id))
     image = question.map_area.contour_map_image
+    if 'PORT' in os.environ:
+        image = image.tobytes()
     print(image, dir(image), type(image))
     return HttpResponse(
         image,
