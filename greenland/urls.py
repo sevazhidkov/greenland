@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^control/add_map', maps.control.views.create_map),
     url(r'^control/add_question', maps.control.views.http_create_question),
     url(r'^control/api/', include('maps.control.api.urls')),
-    url(r'^api/', include('maps.api.urls'))
+    url(r'^api/', include('maps.api.urls')),
+    url('', include('social.apps.django_app.urls', namespace='social'))
 ]

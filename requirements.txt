@@ -3,3 +3,5 @@ dj-database-url
 gunicorn
 psycopg2
 whitenoise
+python-social-auth
+python3-openid
