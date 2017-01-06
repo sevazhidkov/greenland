@@ -20,6 +20,12 @@ def create_answer_set(request):
     })
 
 
+def question(request):
+    if request.method == 'GET':
+        return get_question(request)
+    return create_question(request)
+
+
 def create_answer(request):
     now = datetime.datetime.utcnow()
     data = json.loads(request.body.decode('utf-8'))
