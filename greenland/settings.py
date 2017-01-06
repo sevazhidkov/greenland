@@ -25,6 +25,8 @@ SECRET_KEY = 'lc3^jbn=netrea_9o+1+gt-1@r#w$y758%&2%_d-=tg#o89r^x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if "PORT" in os.environ:
+    DEBUG = False
 
 ALLOWED_HOSTS = ['greenland.herokuapp.com', '127.0.0.1', 'localhost', '0.0.0.0']
 
