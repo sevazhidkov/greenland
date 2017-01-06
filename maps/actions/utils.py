@@ -9,8 +9,9 @@ def distance(lat1, lng1, lat2, lng2):
 
 
 def angle_distance(lat1, lng1, lat2, lng2):
-    return 2 * math.asin((1 - math.cos(lat1) * math.cos(lat2) - math.sin(lat1) * math.sin(lat2) *
-                          math.cos(lng1 - lng2)) / 2)
+    lat1, lng1, lat2, lng2 = map(math.radians, [lat1, lng1, lat2, lng2])
+    return 2 * math.asin(math.sqrt(math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) *
+                                   math.sin((lng2 - lng1) / 2) ** 2))
 
 
 def distance_to_segment(lat, lng, lat1, lng1, lat2, lng2):
@@ -22,6 +23,12 @@ def distance_to_segment(lat, lng, lat1, lng1, lat2, lng2):
     if a1 > math.pi / 2 or a2 > math.pi / 2:
         return EARTH_RADIUS * min(d1, d2)
     c = math.asin(math.sin(d1) * math.sin(a2))
-    if c > math.pi / 2 and c <= math.pi + EPS:
+    if math.pi / 2 < c <= math.pi + EPS:
         c = math.pi - c
     return EARTH_RADIUS * c
+
+'''
+MOSCOW_LAT, MOSCOW_LNG = 55.738274, 37.606821
+SPB_LAT, SPB_LNG = 59.949486, 30.345632
+print(distance(MOSCOW_LAT, MOSCOW_LNG, SPB_LAT, SPB_LNG))
+'''
