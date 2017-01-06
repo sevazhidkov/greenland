@@ -1,31 +1,36 @@
+from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import render, redirect
 from maps.actions import questions
 from maps.models import AnswerSet
 import json
 
 
+def logged_in(request):
+    return request.user is not None and not isinstance(request.user, AnonymousUser)
+
+
 def index(request):
-    if request.user:
+    if logged_in(request):
         return redirect('choice')
     return render(request, 'maps/index.html')
 
 
 def start(request, question_set_id):
-    if not request.user:
+    if not logged_in(request):
         return redirect('/')
     answer_set = questions.create_answer_set(request.user, question_set_id)
     return redirect('/run/' + str(answer_set.id) + '/0')
 
 
 def get_choice(request):
-    if not request.user:
+    if not logged_in(request):
         return redirect('/')
     sets = questions.question_set_list()
     return render(request, 'maps/choice.html', {'sets': sets})
 
 
 def run(request, answer_set_id, idx):
-    if not request.user:
+    if not logged_in(request):
         return redirect('/')
     answer_set = AnswerSet.objects.get(pk=answer_set_id)
     idx = int(idx)
@@ -48,6 +53,6 @@ def run(request, answer_set_id, idx):
 
 
 def results(request, answer_set_id):
-    if not request.user:
+    if not logged_in(request):
         return redirect('/')
     return render(request, 'maps/results.html', {})
