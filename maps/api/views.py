@@ -36,7 +36,7 @@ def create_answer(request):
     answer.question = Question.objects.get(id=json.loads(question_set.question_ids)[question_index])
     if 'answer' in data:
         answer.answer_data = json.dumps(data['answer'])
-        assert questions.validate_answer_data(answer.answer_data)
+        assert questions.validate_answer_data(answer.question.type, answer.answer_data)
     else:
         answer.answer_data = json.dumps(None)
     scoring_data = questions.get_scoring_data(answer.question.type,
@@ -146,9 +146,9 @@ def create_question(request):
     question.type = request.POST['type']
     assert type(question.type) is str
     question.statement_data = request.POST['statement_data']
-    assert questions.validate_statement_data(question.statement_data)
+    assert questions.validate_statement_data(question.type, question.statement_data)
     question.reference_data = request.POST['reference_data']
-    assert questions.validate_reference_data(question.reference_data)
+    assert questions.validate_reference_data(question.type, question.reference_data)
     question.save()
     return JsonResponse({'question_id': question.id})
 
